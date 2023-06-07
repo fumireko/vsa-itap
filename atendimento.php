@@ -262,7 +262,8 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		
         const map = L.map('map', {
         	zoom: 12,
-        	layers: [satellite, lotes]
+        	layers: [satellite, lotes],
+		center: [-25.22123,-49.34584]
         });
 
         const cartoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
@@ -271,14 +272,8 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
         	maxZoom: 20
         });
 
-        fetch("./geojson/data.geojson?<?= time() ?>").then(response => response.json())
+        fetch("./geojson/get_rua.php?rua=<?= @$logradouro ?>&time=<?= time() ?>").then(response => response.json())
         .then(data => {
-			for(let i = 0; i < data.features.length; i++){
-			  if(data.features[i].properties.id_eixo_novo_numero !== '<?= @$logradouro ?>'){
-				data.features.splice(i, 1); 
-				i--;
-			  }
-			}
             var geoJsonLayer = L.geoJSON(data).addTo(lotes);
             var geoJsonLayerWithOptions = L.geoJSON(data, {
                 style: style,
