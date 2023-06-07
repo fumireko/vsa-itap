@@ -1,10 +1,10 @@
 <?php
 //MySQL config
 //Preencha com os seus dados
-$servername = "localhost"; 
-$username = "root";
-$password = "password";
-$dbname = "visa";
+$servername = ""; 
+$username = "";
+$password = "";
+$dbname = "";
 
 function test_input($data) {
 	if(!empty($data)){

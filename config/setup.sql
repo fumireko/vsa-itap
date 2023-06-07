@@ -7557,6 +7557,7 @@ INSERT INTO `tipo_atendimento` (`codigo`, `tipo`, `setor`) VALUES
 (39, 'Isenção Tarifária', 2),
 (40, 'Pensão por morte', 2),
 (41, 'Visita PAIF', 2);
+(42, 'Acolhimento', 1);
 
 --
 -- Índices para tabelas despejadas
