@@ -37,23 +37,6 @@ CREATE TABLE `atendimento` (
   `nis` varchar(15) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Despejando dados para a tabela `atendimento`
---
-
-INSERT INTO `atendimento` (`codigo`, `data_atendimento`, `fkEndereco`, `fkSetor`, `fkTecnico`, `descricao`, `nis`) VALUES
-(3, '2023-06-06', 2538, 4, 14, 'Gestante 10 a 14 anos', '922.40165.24-3'),
-(4, '2023-06-05', 6418, 4, 14, 'Gestante 15 a 18 anos', '252.25355.49-9'),
-(5, '2023-06-04', 687, 1, 11, 'Acolhimento', '388.68738.35-0'),
-(6, '2023-06-03', 5002, 1, 11, 'Psiquiatra', '373.46352.43-5'),
-(7, '2023-06-02', 4168, 2, 12, 'Acompanhamento PAEFI', '385.38591.26-6'),
-(8, '2023-06-02', 3203, 2, 12, 'Inclusão PAEFI', '624.26725.27-1'),
-(9, '2023-06-06', 5399, 3, 13, 'Acompanhamento Jurídico', '177.02483.25-1'),
-(10, '2023-06-01', 6807, 3, 13, 'Violência intrafamiliar', '084.96047.95-2'),
-(11, '2023-06-01', 4481, 5, 15, 'Busca ativa', '568.87430.36-3'),
-(12, '2023-06-06', 4948, 5, 15, 'Vaga escolar', '969.31108.75-0');
-
--- --------------------------------------------------------
 
 --
 -- Estrutura para tabela `endereco`
@@ -7494,11 +7477,6 @@ CREATE TABLE `tecnico` (
 
 INSERT INTO `tecnico` (`codigo`, `nome`, `email`, `login`, `senha`, `setor`) VALUES
 (1, 'Administrador', 'exemplo@mail.com', 'admin', '$2y$10$Og0533djy18XAiRZytXSE.F29anVKxB2h.95J1cOddltVPajG/w72', 99),
-(11, 'Ana Clemente de Sá', 'mail@teste.com', 'anaclemente', '$2y$10$.HBSDnmxN99LT62jM5GLMu8sKUvUIyXv/nVOLkUEtPwxf4HU0WpzG', 1),
-(12, 'Errata de Campos', 'teste@exemplo.com', 'erratacampos', '$2y$10$CZgqIJZk5dpoqz6tOGhpo.z7ApVny3IsuZTGlgWdvmbeQgySTdFKO', 2),
-(13, 'Brilhantina Muratori', 'exemplo@mail.com', 'muratori', '$2y$10$VvyyrrSwGZEOauzwdXeaL.jRKVfMLDAdTv2raQHdlsDwXsmjpJ/Cy', 3),
-(14, 'Vercebúcio dos Santos', 'exemplo@mail.com', 'vercebucio', '$2y$10$LPtiUWHvbwq63HxxsBmz0.mob5XlJ2N6ETgmrMV.8OEYMVX0t/E5q', 4),
-(15, 'Japodeis da Patria Torres', 'exemplo@mail.com', 'jpatriatorres', '$2y$10$8IZWyZy/7AlNY/EMC/N/XuomfK8zr14CjnErjl76dtkkgQrYMgiSq', 5);
 
 -- --------------------------------------------------------
 

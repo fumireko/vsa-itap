@@ -38,7 +38,7 @@
 		//Endpoint
 		if(!empty($data['email']) && !empty($data['login']) && !empty($data['senha']) && !empty($data['setor'])){
 
-			$endpoint_url = "http://" . $_SERVER['SERVER_NAME'] . "/api/atendimentos";
+			$endpoint_url = "http://" . $_SERVER['SERVER_NAME'] . "/api/tecnicos";
 
 			$post_data = json_encode(array(
 				'nome' => $data['nome'],
