@@ -13,16 +13,9 @@ $sql = "SELECT codigo, senha FROM tecnico WHERE login = '$login'";
 	
 @$bcrypt = mysqli_fetch_assoc(mysqli_query($conn, $sql))['senha'];
 @$fkTecnico = mysqli_fetch_assoc(mysqli_query($conn, $sql))['codigo'];
+@$fkEndereco = 9999;
 
 if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh: 0"); }
-
-//Precisa desse trecho aqui pra jogar os dados do mapa no leaflet
-if(isset($_POST['logradouro']) && isset($_POST['numero_predial']) && !empty($_POST['logradouro']) && !empty($_POST['numero_predial'])){
-	$logradouro = $_POST['logradouro'];
-	$numero_predial = $_POST['numero_predial'];
-	$sql = "SELECT codigo FROM endereco WHERE logradouro = '$logradouro' and numero_residencia = $numero_predial";
-	@$fkEndereco = mysqli_fetch_assoc(mysqli_query($conn, $sql))['codigo'];
-}
 
 //Valida o NIS e seta a mensagem de erro
 if(isset($_POST['nis'])){
@@ -102,37 +95,6 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		border-radius: var(--bs-border-radius);
 		transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 	}
-    html, body {
-    	height: 100%;
-    	margin: 0;
-    }
-    body {
-		padding: 0;
-		margin: 0;
-	}
-	#map {
-		height: 50%;
-		width: auto;
-	}
-	.legend {
-		text-align: left;
-		line-height: 18px;
-		color: #555;
-	}
-	.legend i {
-		width: 18px;
-		height: 18px;
-		float: left;
-		margin-right: 8px;
-		opacity: 0.7;
-	}
-	.info {
-		padding: 6px 8px;
-		background: white;
-		background: rgba(255,255,255,0.8);
-		box-shadow: 0 0 15px rgba(0,0,0,0.2);
-		border-radius: 5px;
-	}
     </style>
 </head>
 
@@ -157,10 +119,6 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		  </div>
 		</div>
 		
-		<?php if(!isset($nisError)): ?>
-		<div id="map" class="mx-2"></div>
-		<?php endif; ?>
-
 	<datalist id="atendimentos-setor"></datalist>
 	
 	<div class="container mt-2">
@@ -170,8 +128,6 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 				<input type="hidden" name="fkTecnico" value="<?= $fkTecnico ?>">
 				<input type="hidden" name="fkSetor" value="<?= $fkSetor ?>">
 				<input type="hidden" name="fkEndereco" value="<?= $fkEndereco ?>">
-				<input type="hidden" name="logradouro" value="<?= $logradouro ?>">
-				<input type="hidden" name="numero_predial" value="<?= $numero_predial ?>">
 				
 				<?php if(isset($nisError)): ?>
 				<select list="atendimentos-setor" class="input-text col-4" type="text" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
@@ -221,112 +177,6 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 			e.target.value = formattedInput;
 			if (e.target.value.length > 14) e.target.value = e.target.value.slice(0, 14);
 		});
-	
-		//Leaflet
-        function zoomToFeature(e) {
-       		map.fitBounds(e.target.getBounds());
-       	}
-
-		function style(feature) {
-			if(feature.properties.novo_numero == '<?= @$numero_predial ?>'){
-				return {
-				fillColor: 'red',
-				opacity: 1,
-				color: 'red',
-				fillOpacity: 0.5
-				};
-			}
-			else{
-				return {
-					fillColor: 'grey',
-					opacity: 1,
-					color: 'grey',
-					fillOpacity: 0.25
-				};
-			}
-		}
-		
-		const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        	maxZoom: 19,
-        	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        });
-
-        const lotes = L.layerGroup();
-		
-		const bairros = L.layerGroup();
-
-        const satellite = L.gridLayer.googleMutant({
-        	maxZoom: 20,
-        	type: "satellite",
-        });
-		
-        const map = L.map('map', {
-        	zoom: 12,
-        	layers: [satellite, lotes],
-		center: [-25.22123,-49.34584]
-        });
-
-        const cartoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
-        	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        	subdomains: 'abcd',
-        	maxZoom: 20
-        });
-
-        fetch("./geojson/get_rua.php?rua=<?= @$logradouro ?>&time=<?= time() ?>").then(response => response.json())
-        .then(data => {
-            var geoJsonLayer = L.geoJSON(data).addTo(lotes);
-            var geoJsonLayerWithOptions = L.geoJSON(data, {
-                style: style,
-                onEachFeature: function(feature, layer) {
-					layer.on({click: zoomToFeature});
-                    layer.bindTooltip("<b>" + feature.properties.id_eixo_novo_numero + "</b><br>" + feature.properties.novo_numero);
-                }
-            }).addTo(lotes);
-			map.fitBounds(geoJsonLayer.getBounds());
-        });
-		
-		fetch("./geojson/bairros.geojson?<?= time() ?>").then(response => response.json())
-        .then(data => {
-            var geoJsonLayer = L.geoJSON(data).addTo(bairros);
-            var geoJsonLayerWithOptions = L.geoJSON(data, {
-                style: style,
-                onEachFeature: function(feature, layer) {
-					layer.on({click: zoomToFeature});
-                    layer.bindTooltip("<b>" + feature.properties.name + "</b>");
-                }
-            }).addTo(bairros);
-        });
-
-        const baseLayers = {
-        	'Google Maps': satellite,
-        	'OpenStreetMap': osm
-        };
-
-        const overlays = {
-        	'Nomes': cartoLabels,
-			'Lotes': lotes,
-			'Bairros': bairros
-        };
-		
-		function onLocationFound(e) {
-			const radius = Math.round(e.accuracy / 2);
-
-			L.marker(e.latlng).addTo(map)
-				.bindPopup("Você está em um raio de " + radius + " metros deste ponto.").openPopup();
-				
-			map.fitBounds(e.target.getBounds());
-		}
-
-		function onLocationError(e) {
-			alert(e.message);
-		}
-
-		map.on('locationfound', onLocationFound);
-		map.on('locationerror', onLocationError);
-
-		map.locate({setView: false, maxZoom: 16});
-
-        const layerControl = L.control.layers(baseLayers, overlays, { collapsed: true }).addTo(map);
     </script>
 
 </body>
