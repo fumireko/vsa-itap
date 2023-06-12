@@ -115,7 +115,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		  <div class="bg-light p-4 rounded h-100">
 			<h1>Registrar Atendimento</h1>
 			
-			<p class="lead">Verifique a localização atual e o lote marcado em <span class="text-danger">vermelho</span>.</p>
+			<p class="lead">Verifique os dados antes de inserir o atendimento.</p>
 		  </div>
 		</div>
 		
@@ -155,20 +155,19 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		document.querySelector("#data_atendimento").value = new Date().toISOString().substr(0,10);
 		
 		//Populando as datalists
-		document.querySelector('#desc').addEventListener('focus', function() {
+		document.addEventListener("DOMContentLoaded", function(){
 		  const datalistD = document.getElementsByTagName('select')[0]
 		  datalistD.innerHTML = '';
 		  fetch('api/tipos_atendimento?setor=<?= $fkSetor ?>')
 			.then(response => response.json())
 			.then(data => {
-			console.log(JSON.stringify(data));
 			  data.forEach(item => {
 				const option = document.createElement('option');
 				option.value = item.tipo;
 				option.innerHTML = item.tipo;
 				datalistD.appendChild(option);
 			  });
-			});
+		    });
 		});
 		
 		document.querySelector("#nis").addEventListener('input', e => {

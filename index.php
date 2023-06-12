@@ -24,6 +24,9 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
 	<style>
+	#progress-bar {
+      height: 6px;
+    }
 	.input-text {
 		padding: .375rem .75rem;
 		font-size: 1rem;
@@ -88,6 +91,9 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 				<input class="input-text col-8" type="text" list="logradouros" id="input-rua" name="logradouro" placeholder="Logradouro" required autocomplete="off">
 				<input class="input-text col-4" type="text" list="numeros" id="input-num" name="numero_predial" placeholder="Número predial" required autocomplete="off">
 			</div>
+			<div class="progress mt-2" style="height: 6px;">
+			  <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+			</div>
 			<div class="input-group">
 				<button class="btn btn-sm btn-primary col-6 mt-2" type="submit" id="botao-sel">Selecionar</button>
 				<button class="btn btn-sm btn-secondary col-6 mt-2" type="button" onclick="checkLote()" id="botao-loc">Usar localização</button>
@@ -151,24 +157,62 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
   <?php endif; ?>
   </body>
   <script>
-	  //Puxa o endereço da localização atual
+    // Barra de progresso
+	const progressBar = document.getElementById('progress-bar');
+    const locationHeading = document.getElementById('location-heading');
+    let intervalId;
+
+    function fillProgressBar(startPercentage, endPercentage) {
+      let currentPercentage = startPercentage;
+      const increment = (endPercentage - startPercentage) / 100;
+
+      intervalId = setInterval(function() {
+        if (currentPercentage >= endPercentage) {
+          clearInterval(intervalId);
+        } else {
+          currentPercentage += increment;
+          progressBar.style.width = `${currentPercentage}%`;
+          progressBar.setAttribute('aria-valuenow', currentPercentage);
+        }
+      }, 100);
+    }
+
+    function showLocation(position) {
+      // Stop filling the progress bar and set it to 100%
+      clearInterval(intervalId);
+      progressBar.style.width = '100%';
+      progressBar.setAttribute('aria-valuenow', 100);
+
+	fetch('geojson/get_lote.php?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude)
+	    .then(response => response.json())
+		    .then(data => {
+				console.log(data);
+				document.querySelector('#input-rua').value = data.properties.id_eixo_novo_numero;
+				document.querySelector('#input-num').value = data.properties.novo_numero;
+				document.querySelector('#botao-loc').remove();
+				document.querySelector('#botao-sel').className = "btn btn-sm btn-primary col-12 mt-2" 
+			}
+		);
+    }
+
+    function showError(error) {
+      console.error(error.message);
+	}
+	
+	  //Puxa o endereço da localização atual e atualiza a barra de progresso
 	  function checkLote(){
-	    if (navigator.geolocation) {
-		  navigator.geolocation.getCurrentPosition(function(position) {
-			fetch('geojson/get_lote.php?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude)
-			.then(response => response.json())
-				.then(data => {
-					console.log(data);
-					document.querySelector('#input-rua').value = data.properties.id_eixo_novo_numero;
-					document.querySelector('#input-num').value = data.properties.novo_numero;
-					document.querySelector('#botao-loc').remove();
-					document.querySelector('#botao-sel').className = "btn btn-sm btn-primary col-12 mt-2" 
-				}
-			);
-		  });
-		} else {
-		  alert("Erro: localização negada.");
-		}
+	    navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+		  if (result.state === 'granted') {
+			navigator.geolocation.getCurrentPosition(showLocation);
+		  } else if (result.state === 'prompt') {
+			progressBar.style.display = 'block';
+			progressBar.style.width = '2%';
+			fillProgressBar(2, 67);
+			navigator.geolocation.getCurrentPosition(showLocation, showError);
+		  } else if (result.state === 'denied') {
+			showError(new Error('User denied geolocation'));
+		  }
+		});
 	  }
 	  
 	  //Popula as datalists
