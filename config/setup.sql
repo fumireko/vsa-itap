@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 07/06/2023 às 13:26
+-- Tempo de geração: 12/06/2023 às 14:40
 -- Versão do servidor: 10.4.28-MariaDB
 -- Versão do PHP: 8.1.17
 
@@ -7447,7 +7447,8 @@ INSERT INTO `endereco` (`codigo`, `regional`, `geocodigo`, `bairro`, `logradouro
 (7364, 4, 666693, 'Centro', 'RUA GERONIMO DE ALBUQUERQUE', 141),
 (7365, 24, 667727, 'Jardim Itaú', 'RUA PREF. BENEDITO FURQUIM', 264),
 (7366, 25, 667931, 'Jardim Itaú', 'RUA MIGUEL PEDROSO DE MORAES', 214),
-(7367, 37, 667732, 'Jardim Itaú', 'RUA AGENOR PEREIRA DA COSTA', 240);
+(7367, 37, 667732, 'Jardim Itaú', 'RUA AGENOR PEREIRA DA COSTA', 240),
+(9999, 0, 0, 'Nenhum', 'N/D', 0);
 
 -- --------------------------------------------------------
 
@@ -7557,7 +7558,6 @@ INSERT INTO `tipo_atendimento` (`codigo`, `tipo`, `setor`) VALUES
 (39, 'Isenção Tarifária', 2),
 (40, 'Pensão por morte', 2),
 (41, 'Visita PAIF', 2);
-(42, 'Acolhimento', 1);
 
 --
 -- Índices para tabelas despejadas
@@ -7606,13 +7606,13 @@ ALTER TABLE `tipo_atendimento`
 -- AUTO_INCREMENT de tabela `atendimento`
 --
 ALTER TABLE `atendimento`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de tabela `endereco`
 --
 ALTER TABLE `endereco`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7368;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10000;
 
 --
 -- AUTO_INCREMENT de tabela `setor`
