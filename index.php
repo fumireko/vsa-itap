@@ -148,7 +148,9 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 			    <div class="px-2 mx-2 bd-highlight"></div>
 				<input class="form-control h-25 text-center" type="text" id="filtro-tabela" placeholder="Pesquisar na tabela...">
 				<div class="px-2 mx-2 bd-highlight"></div>
+				<br>
 			</div>
+			<p class="text-center" style="font-size: 12px;"><a class="text-center" href="tabela.php">Ver filtros</a></p>
 			</div>
 		</div>	
 	<?php endif; ?>
@@ -184,8 +186,18 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
       progressBar.setAttribute('aria-valuenow', 100);
 
 	fetch('geojson/get_lote.php?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude)
-	    .then(response => response.json())
-		    .then(data => {
+	    .then(response => {
+			if (!response.body === "") return response.json();
+			else {
+				const inputTexts = document.querySelectorAll('.input-text');
+				for (let i = 0; i < inputTexts.length; i++) {
+				  inputTexts[i].classList.add('is-invalid', 'form-control');
+				}	
+				document.querySelector('.input-group').innerHTML += '<span class="invalid-feedback">Não foi possível determinar a sua localização. Por favor preencha os dados manualmente.</span>';
+				document.querySelector('.progress').style = "display: none";
+			}
+		})
+		.then(data => {
 				console.log(data);
 				document.querySelector('#input-rua').value = data.properties.id_eixo_novo_numero;
 				document.querySelector('#input-num').value = data.properties.novo_numero;
