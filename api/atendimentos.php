@@ -8,9 +8,13 @@ if ($conn->connect_error) {
 }
 
 // Endpoint GET /atendimentos
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/atendimentos') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_GET)) {
 
-    $sql = "SELECT * FROM atendimento";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico;";
     $result = mysqli_query($conn, $sql);
 	
     $atendimentos = array();
@@ -26,11 +30,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/at
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     $codigo = $_GET['id'];
 
-    $sql = "SELECT * FROM atendimento WHERE codigo = $codigo";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.codigo = $codigo";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -43,11 +52,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['endereco'])) {
     $codigo = $_GET['endereco'];
 
-    $sql = "SELECT * FROM atendimento WHERE fkEndereco = $codigo";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.fkEndereco = $codigo";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -60,11 +74,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['endereco'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['setor'])) {
     $codigo = $_GET['setor'];
 
-    $sql = "SELECT * FROM atendimento WHERE fkSetor = $codigo";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.fkSetor = $codigo";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -77,11 +96,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['setor'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['tecnico'])) {
     $codigo = $_GET['tecnico'];
 
-    $sql = "SELECT * FROM atendimento WHERE fkTecnico = $codigo";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.fkTecnico = $codigo";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -94,11 +118,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['tecnico'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['descricao'])) {
     $codigo = $_GET['descricao'];
 
-    $sql = "SELECT * FROM atendimento WHERE descricao = $codigo";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.descricao = $codigo";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -112,11 +141,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['descricao']) && isset($
     $desc = $_GET['descricao'];
 	$codigo = $_GET['setor'];
 
-    $sql = "SELECT * FROM atendimento WHERE fkSetor = $codigo and descricao = $desc";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.fkSetor = $codigo and descricao = $desc";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -130,11 +164,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['descricao']) && isset($
     $desc = $_GET['descricao'];
 	$codigo = $_GET['tecnico'];
 
-    $sql = "SELECT * FROM atendimento WHERE fkTecnico = $codigo and descricao = $desc";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.fkTecnico = $codigo and descricao = $desc";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -148,11 +187,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['data-inicial']) && isse
     $dti = $_GET['data-inicial'];
 	$dtf = $_GET['data-final'];
 
-    $sql = "SELECT * FROM atendimento WHERE data_atendimento BETWEEN '$dti' and '$dtf'";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.data_atendimento BETWEEN '$dti' and '$dtf'";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -167,11 +211,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['data-inicial']) && isse
 	$dtf = $_GET['data-final'];
 	$codigo = $_GET['endereco'];
 
-    $sql = "SELECT * FROM atendimento WHERE fkEndereco = $codigo AND data_atendimento BETWEEN '$dti' AND '$dtf'";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.fkEndereco = $codigo AND data_atendimento BETWEEN '$dti' AND '$dtf'";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -186,11 +235,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['data-inicial']) && isse
 	$dtf = $_GET['data-final'];
 	$codigo = $_GET['setor'];
 
-    $sql = "SELECT * FROM atendimento WHERE fkSetor = $codigo AND data_atendimento BETWEEN '$dti' AND '$dtf'";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.fkSetor = $codigo AND data_atendimento BETWEEN '$dti' AND '$dtf'";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -205,11 +259,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['data-inicial']) && isse
 	$dtf = $_GET['data-final'];
 	$codigo = $_GET['tecnico'];
 
-    $sql = "SELECT * FROM atendimento WHERE fkTecnico = $codigo AND data_atendimento BETWEEN '$dti' AND '$dtf'";
+    $sql = "SELECT a.*, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.fkTecnico = $codigo AND data_atendimento BETWEEN '$dti' AND '$dtf'";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -276,5 +335,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && isset($_GET['id'])) {
 }
 
 // Endpoint inválido
-http_response_code(404);
+ 
 exit;

@@ -19,10 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['setor'])) {
         $atendimentos[] = $row;
     }
 	
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($atendimentos);
 }
 
 // Endpoint inválido
-http_response_code(404);
+ 
 exit;

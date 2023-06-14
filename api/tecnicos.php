@@ -8,7 +8,7 @@ if ($conn->connect_error) {
 }
 
 // Endpoint GET /tecnicos
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/tecnicos') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_GET)) {
 
     $sql = "SELECT * FROM tecnico";
     $result = mysqli_query($conn, $sql);
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/te
         $tecnicos[] = $row;
     }
 
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($tecnicos);
 }
 
@@ -30,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
     $tecnico = mysqli_fetch_assoc($result);
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($tecnico);
 }
 
@@ -47,12 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['login'])) {
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
     $tecnico = mysqli_fetch_assoc($result);
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($tecnico);
 }
 
@@ -121,5 +121,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && isset($_GET['id'])) {
 }
 
 // Endpoint inválido
-http_response_code(404);
+ 
 exit;

@@ -9,7 +9,7 @@ if (!$conn) {
 }
 
 // Endpoint GET /enderecos
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/enderecos') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_GET)) {
 
     // Executa a query para obter todos os endereços cadastrados no sistema
     $sql = "SELECT * FROM endereco";
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/en
     }
 
     // Retorna os endereços como JSON
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($enderecos);
 }
 
@@ -36,13 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
 
     // Verifica se o endereço foi encontrado
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
     // Retorna o endereço como JSON
     $endereco = mysqli_fetch_assoc($result);
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($endereco);
 }
 
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['regional'])) {
 
     // Verifica se o endereço foi encontrado
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['regional'])) {
     while ($row = mysqli_fetch_assoc($result)) {
         $enderecos[] = $row;
     }
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($enderecos);
 }
 
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['logradouro'])) {
 
     // Verifica se o endereço foi encontrado
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['logradouro'])) {
     while ($row = mysqli_fetch_assoc($result)) {
         $enderecos[] = $row;
     }
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($enderecos);
 }
 
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['bairro'])) {
 
     // Verifica se o endereço foi encontrado
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['bairro'])) {
     while ($row = mysqli_fetch_assoc($result)) {
         $enderecos[] = $row;
     }
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($enderecos);
 }
 mysqli_close($conn);

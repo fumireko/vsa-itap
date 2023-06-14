@@ -8,7 +8,7 @@ if ($conn->connect_error) {
 }
 
 // Endpoint GET /setores
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/setores') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_GET)) {
 
     $sql = "SELECT * FROM setor";
     $result = mysqli_query($conn, $sql);
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/api/se
         $setores[] = $row;
     }
 
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($setores);
 }
 
@@ -30,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) === 0) {
-        http_response_code(404);
+         
         die();
     }
 
     $setores = mysqli_fetch_assoc($result);
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
     echo json_encode($setores);
 }
 
@@ -88,5 +88,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && isset($_GET['id'])) {
 }
 
 // Endpoint inválido
-http_response_code(404);
+ 
 exit;
