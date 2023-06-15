@@ -157,7 +157,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 			var tr = $('<tr>').appendTo(tbody);
 			$('<td>').text(item.codigo).appendTo(tr);
 			$('<td>').text(item.data_atendimento).appendTo(tr);
-			$('<td>').text(item.endereco).appendTo(tr);
+			$('<td>').html('<a href="api/enderecos?logradouro=' + item.endereco + '">' + item.endereco + '</a>').appendTo(tr);
 			$('<td>').text(item.setor).appendTo(tr);
 			$('<td>').text(item.tecnico).appendTo(tr);
 			$('<td>').text(item.descricao).appendTo(tr);

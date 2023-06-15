@@ -72,14 +72,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['regional'])) {
 // Endpoint GET /enderecos/{logradouro}
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['logradouro'])) {
     $codigo = $_GET['logradouro'];
-
-    // Executa a query para obter o endereço correspondente ao código informado
-    $sql = "SELECT * FROM endereco WHERE logradouro = '$codigo'";
+	$lg = explode(" ", $codigo);
+	
+	if(is_numeric(end($lg))){
+		$num = end($lg);
+		$codigo = preg_replace('/\d+$/', '', $codigo);
+		header("Location: ../geojson/view.php?lg=$codigo&n=$num");
+	}
+	else{
+	$sql = "SELECT * FROM endereco WHERE logradouro = '$codigo'";
+	
+    // Executa a query para obter o endereço correspondente ao código informado    
     $result = mysqli_query($conn, $sql);
 
     // Verifica se o endereço foi encontrado
     if (mysqli_num_rows($result) === 0) {
-         
         die();
     }
 
@@ -89,7 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['logradouro'])) {
         $enderecos[] = $row;
     }
     header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
-    echo json_encode($enderecos);
+    json_encode($enderecos);
+	}
 }
 
 // Endpoint GET /enderecos/{bairro}
