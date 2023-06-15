@@ -53,8 +53,8 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	<nav class="navbar fixed-bottom navbar-dark bg-dark pb-4 text-light">
 		<div class="container-fluid row d-flex justify-content-center px-2 mx-2">
 			<div class="col-2">
-			  <label for="codigo-filter">Número:</label>
-			  <select class="form-control" id="codigo-filter">
+			  <label for="nis-filter">NIS:</label>
+			  <select class="form-control" id="nis-filter">
 				<option value="">Todos</option>
 			  </select>
 			</div>
@@ -146,7 +146,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 		  var tbody = $('<tbody>').appendTo(table);
 		  
 		  // Cria as colunas da tabela
-		  var columns = ['Número', 'Data', 'Endereço', 'Setor', 'Técnico', 'Descrição'];
+		  var columns = ['NIS', 'Data', 'Endereço', 'Setor', 'Técnico', 'Descrição'];
 		  var tr = $('<tr>').appendTo(thead);
 		  for (var i = 0; i < columns.length; i++) {
 			$('<th>').text(columns[i]).appendTo(tr);
@@ -155,7 +155,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 		  // Preenche a tabela com os dados
 		  $.each(data, function(index, item) {
 			var tr = $('<tr>').appendTo(tbody);
-			$('<td>').text(item.codigo).appendTo(tr);
+			$('<td>').text(item.nis).appendTo(tr);
 			$('<td>').text(item.data_atendimento).appendTo(tr);
 			$('<td>').html('<a href="api/enderecos?logradouro=' + item.endereco + '">' + item.endereco + '</a>').appendTo(tr);
 			$('<td>').text(item.setor).appendTo(tr);
@@ -168,7 +168,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 		  
 		  // Filtra os dados na tabela
 		  $('select').on('change', function() {
-			var codigo = $('#codigo-filter').val();
+			var nis = $('#nis-filter').val();
 			var dataAtendimento = $('#data-atendimento-filter').val();
 			var endereco = $('#endereco-filter').val();
 			var setor = $('#setor-filter').val();
@@ -178,7 +178,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 			$('tbody tr').each(function(index, item) {
 			  var showRow = true;
 			  
-			  if (codigo && $(item).find('td:nth-child(1)').text() !== codigo) {
+			  if (nis && $(item).find('td:nth-child(1)').text() !== nis) {
 				showRow = false;
 			  }
 			  
@@ -208,7 +208,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 		  
 		  // Preenche os selects com as opções de filtro
 		  $.each(data, function(index, item) {
-			addSelectOption('#codigo-filter', item.codigo);
+			addSelectOption('#nis-filter', item.nis);
 			addSelectOption('#data-atendimento-filter', item.data_atendimento);
 			addDatalistOption('#list-enderecos', item.endereco);
 			addSelectOption('#setor-filter', item.setor);
@@ -237,7 +237,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	});
 	
 	$('#filtro-endereco').on('click', function() {
-	  var codigo = $('#codigo-filter').val();
+	  var nis = $('#nis-filter').val();
 	  var dataAtendimento = $('#data-atendimento-filter').val();
 	  var endereco = $('#endereco-filter').val();
 	  var setor = $('#setor-filter').val();
@@ -247,7 +247,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	  $('tbody tr').each(function(index, item) {
 		var showRow = true;
 
-		if (codigo && $(item).find('td:nth-child(1)').text() !== codigo) {
+		if (nis && $(item).find('td:nth-child(1)').text() !== nis) {
 		  showRow = false;
 		}
 
