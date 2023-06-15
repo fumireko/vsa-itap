@@ -25,10 +25,11 @@ if(isset($_POST['logradouro']) && isset($_POST['numero_predial']) && !empty($_PO
 }
 
 //Valida o NIS e seta a mensagem de erro
-if(isset($_POST['nis'])){
+if(isset($_POST['nis']) && !isset($_POST['sem_nis'])){
 	if (checkPISPASEP($_POST['nis'])) $nis = test_input($_POST['nis']);
 	else $nisError = "Número do NIS inválido.";
 }
+if(isset($_POST['sem_nis'])) $nis = '000.00000.00-0';
 
 //Lógica do endpoint
 if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fkEndereco']) && !empty($_POST['data_atendimento']) && !empty($_POST['descricao']) && !isset($nisError)){ 
@@ -88,7 +89,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
     <script src="https://unpkg.com/leaflet/dist/leaflet.js?"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=" async="" defer=""></script>
     <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@latest/dist/Leaflet.GoogleMutant.js?"></script>
-
+	
     <style>
 	.input-text {
 		padding: .375rem .75rem;
@@ -186,6 +187,10 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 				
 			</div>
 			<div align="center">
+				<input class="form-check-input" type="checkbox" id="sem-nis" name="sem-nis">
+				<label class="form-check-label" style="font-size:14px" for="sem-nis">Atendimento sem NIS</label>
+			</div>
+			<div align="center">
 				<button class="btn btn-sm btn-primary col-6 mt-2" type="submit" id="botao-sel">Enviar</button>
 			</div>
 		</form>
@@ -214,13 +219,35 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		    });
 		});
 		
-		document.querySelector("#nis").addEventListener('input', e => {
-			let formattedInput = e.target.value.replace(/\D/g, '');
-			formattedInput = formattedInput.replace(/^(\d{3})(\d{5})(\d{2})(\d{1})$/, '$1.$2.$3-$4');
-			e.target.value = formattedInput;
-			if (e.target.value.length > 14) e.target.value = e.target.value.slice(0, 14);
+		const nisInput = document.querySelector('#nis');
+		const semNisInput = document.querySelector('#sem-nis');
+
+		nisInput.addEventListener('input', (e) => {
+		  const { value } = nisInput;
+
+		  if (value !== '') {
+			semNisInput.checked = false;
+			semNisInput.disabled = true;
+		  } else {
+			semNisInput.disabled = false;
+		  }
+
+		  let formattedInput = value.replace(/\D/g, '');
+		  formattedInput = formattedInput.replace(/^(\d{3})(\d{5})(\d{2})(\d{1})$/, '$1.$2.$3-$4');
+		  nisInput.value = formattedInput.slice(0, 14);
 		});
-	
+
+		semNisInput.addEventListener('input', () => {
+		  const { checked } = semNisInput;
+
+		  if (checked) {
+			nisInput.disabled = true;
+			nisInput.value = '';
+		  } else {
+			nisInput.disabled = false;
+		  }
+		});
+
 		//Leaflet
         function zoomToFeature(e) {
        		map.fitBounds(e.target.getBounds());
