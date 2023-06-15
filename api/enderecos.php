@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['logradouro'])) {
         $enderecos[] = $row;
     }
     header('Content-Type: application/json'); header('Access-Control-Allow-Origin: *');
-    json_encode($enderecos);
+    echo json_encode($enderecos);
 	}
 }
 
