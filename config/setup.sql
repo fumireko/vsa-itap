@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 12/06/2023 às 14:40
+-- Tempo de geração: 15/06/2023 às 15:47
 -- Versão do servidor: 10.4.28-MariaDB
 -- Versão do PHP: 8.1.17
 
@@ -37,6 +37,7 @@ CREATE TABLE `atendimento` (
   `nis` varchar(15) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
 
 --
 -- Estrutura para tabela `endereco`
@@ -7477,6 +7478,11 @@ CREATE TABLE `tecnico` (
 
 INSERT INTO `tecnico` (`codigo`, `nome`, `email`, `login`, `senha`, `setor`) VALUES
 (1, 'Administrador', 'exemplo@mail.com', 'admin', '$2y$10$Og0533djy18XAiRZytXSE.F29anVKxB2h.95J1cOddltVPajG/w72', 99),
+(17, 'abrigo', 'abrigo@teste.com', 'abrigo', '$2y$10$QaQq/zfHxsLUwvTzwTacpumKLtDcMKVjDyoy2zmEkj9KZyb5XvFV.', 1),
+(18, 'cras', 'cras@teste.com', 'cras', '$2y$10$hIWXkvmLOUHX5cPAbqlG/eQJuAkB2kmxnYI6Xww7Sv3XMXiEWhMWe', 2),
+(19, 'creas', 'creas@teste.com', 'creas', '$2y$10$ZNBU8djtn00bZ4XaHYbjhOIsK2CNurEVSia1qZ3UnYuO9hlCwWFIq', 3),
+(20, 'criancafeliz', 'criancafeliz@teste.com', 'criancafeliz', '$2y$10$MXMap7FxLchZijAAtuVV/ui5HDPO30DvSq9C2bWlYSRV2rkJVnf5O', 4),
+(21, 'conselhotutelar', 'conselhotutelar@teste.com', 'conselhotutelar', '$2y$10$IjoW1ezUDL7UiH8KLdg8v.eFmyNbRskhh0xPT069JjufhMjLXF9Ce', 5);
 
 -- --------------------------------------------------------
 
@@ -7535,7 +7541,15 @@ INSERT INTO `tipo_atendimento` (`codigo`, `tipo`, `setor`) VALUES
 (38, 'Inclusão PAIF', 2),
 (39, 'Isenção Tarifária', 2),
 (40, 'Pensão por morte', 2),
-(41, 'Visita PAIF', 2);
+(41, 'Visita PAIF', 2),
+(42, 'Acompanhamento setor da saúde', 1),
+(43, 'Acompanhamento setor educação', 1),
+(44, 'Acolhidos', 1),
+(45, 'Audiência', 1),
+(46, 'Documentação civil', 1),
+(47, 'Mediação com o mercado de trabalho', 1),
+(48, 'Reunião estudo de caso', 1),
+(49, 'Visita domiciliar', 1);
 
 --
 -- Índices para tabelas despejadas
@@ -7584,7 +7598,7 @@ ALTER TABLE `tipo_atendimento`
 -- AUTO_INCREMENT de tabela `atendimento`
 --
 ALTER TABLE `atendimento`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de tabela `endereco`
@@ -7602,13 +7616,13 @@ ALTER TABLE `setor`
 -- AUTO_INCREMENT de tabela `tecnico`
 --
 ALTER TABLE `tecnico`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de tabela `tipo_atendimento`
 --
 ALTER TABLE `tipo_atendimento`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- Restrições para tabelas despejadas
