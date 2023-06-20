@@ -5,7 +5,21 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 $geojson = file_get_contents('bairros.geojson');
 $data = json_decode($geojson, true);
 
-$sql = "SELECT e.bairro, COUNT(a.codigo) as total FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco GROUP BY e.bairro ORDER BY total DESC;";
+if(isset($_GET['setor']) && $_GET['setor'] != 99){
+	$setor = $_GET['setor'];
+	$sql = "SELECT e.bairro, COUNT(a.codigo) as total 
+			FROM atendimento a 
+			INNER JOIN endereco e ON e.codigo = a.fkEndereco 
+			WHERE a.fksetor = $setor 
+			GROUP BY e.bairro ORDER BY total DESC";
+}
+
+else
+$sql = "SELECT e.bairro, COUNT(a.codigo) as total 
+		FROM atendimento a 
+		INNER JOIN endereco e ON e.codigo = a.fkEndereco 
+		GROUP BY e.bairro ORDER BY total DESC";
+	
 $result = mysqli_query($conn, $sql);
 
 $totals = [];

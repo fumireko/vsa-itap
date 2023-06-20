@@ -104,11 +104,52 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	  </div>
 	</div>
 	
+	<div class="container mt-3">
+	  <div class="bg-light p-5 rounded">
+		<h1>Mapas</h1>
+		<p class="lead">Use os filtros abaixo para gerar mapas.</p>
+		<?php
+		$sql = 'select distinct a.fksetor, s.nome from atendimento a inner join setor s on (s.codigo = a.fksetor) where s.nome != "Teste"';
+		$result = mysqli_query($conn, $sql);
+		?>
+		<form action="geojson/mapa.php" method="get">
+			<div class="form-check form-switch">
+			  <input class="form-check-input" type="checkbox" role="switch" id="checkSetor" checked>
+			  <label class="form-check-label" for="flexSwitchCheckChecked">Filtrar por setor</label>
+				<select class="form-select" id="selectSetor" name="setor">
+					<option value="99">Todos</option>
+					<?php while($row = mysqli_fetch_assoc($result)): ?>
+					<option value='<?= $row["fksetor"] ?>'><?= $row["nome"] ?></option>
+					<?php endWhile; ?>
+				</select>
+			</div>
+			<?php
+			$sql = 'select distinct a.descricao from atendimento a';
+			$result = mysqli_query($conn, $sql);
+			?>
+			<div class="form-check form-switch">
+			  <input class="form-check-input" type="checkbox" role="switch" id="checkAtendimento">
+			  <label class="form-check-label" for="flexSwitchCheckDefault">Filtrar por atendimento</label>
+				<select class="form-select"id="selectAtendimento" name="descricao" disabled>
+					<option value="filtro">Todos</option>
+					<?php while($row = mysqli_fetch_assoc($result)): ?>
+					<option value='<?= $row["descricao"] ?>'><?= $row["descricao"] ?></option>
+					<?php endWhile; ?>
+				</select>
+			</div>
+		  <button type="submit" class="btn btn-sm col-12 mt-3 btn-primary">Gerar mapa</button>
+		</form>
+	  </div>
+	</div>
+	<script>
+	</script>
+	
 	<?php if($login === 'admin'): ?>
 		
 		<div class="container mt-3">
 		  <div class="bg-light rounded pb-3">
-			<h1 class="text-center pt-3">Lista de atendimentos</h1>
+			<h1 class="text-center pt-3" id="topo">Lista de atendimentos</h1>
+			<p class="text-center"><a class="text-center" href="#filtro-tabela">Ir para o final</a></p>
 			<?php
 			$sql = "SELECT a.codigo, a.data_atendimento, a.descricao, a.nis, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
 			FROM atendimento a
@@ -150,7 +191,10 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 				<div class="px-2 mx-2 bd-highlight"></div>
 				<br>
 			</div>
-			<p class="text-center" style="font-size: 12px;"><a class="text-center" href="tabela.php">Ver filtros</a></p>
+			<p class="text-center">
+				<a class="text-center" href="tabela.php">Filtros avançados</a>
+				<a class="text-center" href="#topo">Voltar para o topo</a>
+			</p>
 			</div>
 		</div>	
 	<?php endif; ?>
@@ -159,6 +203,40 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
   <?php endif; ?>
   </body>
   <script>
+	//Filtros do mapa
+	$(document).ready(function() {
+	  const checkSetor = $('#checkSetor');
+	  const checkAtendimento = $('#checkAtendimento');
+	  const selectSetor = $('#selectSetor');
+	  const selectAtendimento = $('#selectAtendimento');
+
+	  checkSetor.on('change', function() {
+		if (checkSetor.prop('checked')) {
+		  checkAtendimento.prop('checked', false);
+		  selectAtendimento.prop('disabled', true);
+		  selectSetor.prop('disabled', false);
+		}
+		else {
+		  checkAtendimento.prop('checked', true);
+		  selectAtendimento.prop('disabled', false);
+		  selectSetor.prop('disabled', true);
+		}
+	  });
+	  
+	  checkAtendimento.on('change', function() {
+		if (checkAtendimento.prop('checked')) {
+		  checkSetor.prop('checked', false);
+		  selectSetor.prop('disabled', true);
+		  selectAtendimento.prop('disabled', false);
+		}
+		else {
+		  checkSetor.prop('checked', true);
+		  selectAtendimento.prop('disabled', true);
+		  selectSetor.prop('disabled', false);
+		}
+	  });
+	});
+
     // Barra de progresso
 	const progressBar = document.getElementById('progress-bar');
     const locationHeading = document.getElementById('location-heading');
