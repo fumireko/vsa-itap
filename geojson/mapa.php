@@ -57,7 +57,8 @@
     <script>
 
 	<?php
-	$db = new mysqli('localhost','root', 'password', 'visa');
+	require '../config/config.php';
+	$db = new mysqli($servername, $username, $password, $dbname);
 	
 	if(isset($_GET['descricao']))
 		$descricao = $_GET['descricao'];
