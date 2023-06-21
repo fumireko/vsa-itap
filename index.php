@@ -265,7 +265,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 
 	fetch('geojson/get_lote.php?lat=' + position.coords.latitude + '&lon=' + position.coords.longitude)
 	    .then(response => {
-			if (!response.body === "") return response.json();
+			if (response.ok) return response.json();
 			else {
 				const inputTexts = document.querySelectorAll('.input-text');
 				for (let i = 0; i < inputTexts.length; i++) {
