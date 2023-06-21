@@ -3,7 +3,7 @@ Este é um sistema de registro de atendimentos desenvolvido em PHP e MySQL para 
 ## Requisitos
 - PHP versão 7 ou superior
 - MySQL versão 5.6 ou superior
-- Servidor Apache instalado
+- Uma instância do servidor web Apache2
 ## Instalação
 
 1. Clone o repositório
@@ -18,11 +18,14 @@ $username = "";
 $password = "";
 $dbname = "";
 ```
-3. Execute o arquivo `setup.php` ou importe o arquivo `setup.sql`.
+3. Acesse o arquivo `setup.php` no seu navegador para configurar o sistema.
+- O arquivo `sample.sql` possui dados de exemplo para demonstrar as funcionalidades.
+- Se deseja importá-lo, execute a linha de comando abaixo:
 ```
-mysql -u usuario -p nome_do_banco_de_dados < config/setup.sql
+mysql -u {seu_usuario} -p {seu_banco_de_dados} < config/sample.sql
 ```
-4. Certifique de habilitar o .htaccess na sua configuração do Apache (`/etc/apache2/apache2.conf`).
+4. Certifique de habilitar o `.htaccess` na sua configuração do Apache (`/etc/apache2/apache2.conf`).
+- Os trechos que usamo código na pasta `api/` precisam da regra `AllowOverride` abaixo ativada para funcionar.
 - A sua configuração deve estar parecida com essa:
 ```
 <VirtualHost *:80>
@@ -37,5 +40,3 @@ mysql -u usuario -p nome_do_banco_de_dados < config/setup.sql
 </VirtualHost>
 ```
 5. Acesse o sistema pelo navegador usando as credenciais padrão `admin` e `password`.
-
-
