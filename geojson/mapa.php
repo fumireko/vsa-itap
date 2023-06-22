@@ -60,6 +60,9 @@
 	require '../config/config.php';
 	$db = new mysqli($servername, $username, $password, $dbname);
 	
+	$dti = $_GET['dti'];
+	$dtf = $_GET['dtf'];
+	
 	if(isset($_GET['descricao']))
 		$descricao = $_GET['descricao'];
 	else	
@@ -71,15 +74,16 @@
 				  FROM atendimento a 
 				  INNER JOIN endereco e ON e.codigo = a.fkEndereco 
 				  INNER JOIN setor s ON a.fksetor = s.codigo
-				  WHERE a.fksetor = $setor 
+				  WHERE a.fksetor = $setor and a.data_atendimento between '$dti' and '$dtf' 
 				  GROUP BY e.bairro ORDER BY max_val DESC LIMIT 1;";
 	}
 	else {
 		$setor = 99;
 		$query = "SELECT e.bairro, COUNT(a.codigo) as max_val 
-				   FROM atendimento a 
-				   INNER JOIN endereco e ON e.codigo = a.fkEndereco 
-				   GROUP BY e.bairro ORDER BY max_val DESC LIMIT 1;";
+				  FROM atendimento a 
+				  INNER JOIN endereco e ON e.codigo = a.fkEndereco
+				  WHERE a.data_atendimento between '$dti' and '$dtf'
+				  GROUP BY e.bairro ORDER BY max_val DESC LIMIT 1;";
 	}
 	$result = $db->query($query);
 	$row = $result->fetch_assoc();
@@ -144,7 +148,7 @@
 			};
 		}
 
-		fetch("./get_lote.php?filtro=1&descricao=<?= $descricao ?>").then(response => response.json())
+		fetch("./get_lote.php?filtro=1&descricao=<?= $descricao ?>&dti=<?= $dti ?>&dtf=<?= $dtf ?>").then(response => response.json())
 		.then(data => {
 			var geoJsonLayer = L.geoJSON(data).addTo(bairros);
 			map.fitBounds(geoJsonLayer.getBounds());
@@ -171,7 +175,7 @@
 			};
 		}
 
-		fetch("./get_lote.php?filtro=1").then(response => response.json())
+		fetch("./get_lote.php?filtro=1&dti=<?= $dti ?>&dtf=<?= $dtf ?>").then(response => response.json())
 		.then(data => {
 			var geoJsonLayer = L.geoJSON(data).addTo(bairros);
 			map.fitBounds(geoJsonLayer.getBounds());
@@ -198,7 +202,7 @@
 			};
 		}
 
-		fetch("./get_sum.php?setor=<?= $setor ?>").then(response => response.json())
+		fetch("./get_sum.php?setor=<?= $setor ?>&dti=<?= $dti ?>&dtf=<?= $dtf ?>").then(response => response.json())
 		.then(data => {
 			var geoJsonLayer = L.geoJSON(data).addTo(bairros);
 			map.fitBounds(geoJsonLayer.getBounds());

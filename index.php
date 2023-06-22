@@ -108,14 +108,33 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	  <div class="bg-light p-5 rounded">
 		<h1>Mapas</h1>
 		<p class="lead">Use os filtros abaixo para gerar mapas.</p>
-		<?php
-		$sql = 'select distinct a.fksetor, s.nome from atendimento a inner join setor s on (s.codigo = a.fksetor) where s.nome != "Teste"';
-		$result = mysqli_query($conn, $sql);
-		?>
 		<form action="geojson/mapa.php" method="get">
+			<?php
+			$sql = "SELECT 
+			(SELECT data_atendimento FROM atendimento ORDER BY data_atendimento ASC LIMIT 1) AS min_data,
+			(SELECT data_atendimento FROM atendimento ORDER BY data_atendimento DESC LIMIT 1) AS max_data;";
+			$row = mysqli_fetch_assoc(mysqli_query($conn, $sql));
+			?>
+			<div class="mb-3 row">
+			  <div class="col-6">
+				  <label class="form-check-label" for="inputData">Data inicial:</label>
+				  <input class="form-control" type="date" name="dti" id="dtInicial"
+				  min="<?= $row['min_data'] ?>" max="<?= $row['max_data'] ?>" value="<?= $row['min_data'] ?>">
+			  </div>
+			 
+			  <div class="col-6">
+				  <label class="form-check-label" for="inputData">Data final:</label>
+				  <input class="form-control" type="date" name="dtf" id="dtFinal"
+				  min="<?= $row['min_data'] ?>" max="<?= $row['max_data'] ?>" value="<?= $row['max_data'] ?>">
+			  </div>
+			</div>
+			<?php
+			$sql = 'select distinct a.fksetor, s.nome from atendimento a inner join setor s on (s.codigo = a.fksetor) where s.nome != "Teste"';
+			$result = mysqli_query($conn, $sql);
+			?>
 			<div class="form-check form-switch">
 			  <input class="form-check-input" type="checkbox" role="switch" id="checkSetor" checked>
-			  <label class="form-check-label" for="flexSwitchCheckChecked">Filtrar por setor</label>
+			  <label class="form-check-label" for="checkSetor">Filtrar por setor</label>
 				<select class="form-select" id="selectSetor" name="setor">
 					<option value="99">Todos</option>
 					<?php while($row = mysqli_fetch_assoc($result)): ?>
@@ -129,7 +148,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 			?>
 			<div class="form-check form-switch">
 			  <input class="form-check-input" type="checkbox" role="switch" id="checkAtendimento">
-			  <label class="form-check-label" for="flexSwitchCheckDefault">Filtrar por atendimento</label>
+			  <label class="form-check-label" for="checkAtendimento">Filtrar por atendimento</label>
 				<select class="form-select"id="selectAtendimento" name="descricao" disabled>
 					<option value="filtro">Todos</option>
 					<?php while($row = mysqli_fetch_assoc($result)): ?>
@@ -209,7 +228,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	  const checkAtendimento = $('#checkAtendimento');
 	  const selectSetor = $('#selectSetor');
 	  const selectAtendimento = $('#selectAtendimento');
-
+	  
 	  checkSetor.on('change', function() {
 		if (checkSetor.prop('checked')) {
 		  checkAtendimento.prop('checked', false);

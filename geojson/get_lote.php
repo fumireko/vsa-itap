@@ -4,17 +4,22 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 $geojson = json_decode(file_get_contents('data.geojson'), true);
 
-if(isset($_GET['filtro'])){
+if(isset($_GET['filtro']) && isset($_GET['dti']) && isset($_GET['dtf'])){
     $features = array();
     $descricoes = array();
+	
+	$dti = $_GET['dti'];
+	$dtf = $_GET['dtf'];
 
 	if(!isset($_GET['descricao'])) 
 		$sql = "SELECT a.descricao, a.fkEndereco, e.regional, e.logradouro, e.numero_residencia 
-		FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco";
+		FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco
+		WHERE a.data_atendimento BETWEEN '$dti' AND '$dtf'";
 	else{
 		$descricao = $_GET['descricao'];
 		$sql = "SELECT a.descricao, a.fkEndereco, e.regional, e.logradouro, e.numero_residencia 
-		FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco where a.descricao = '$descricao'";
+		FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco 
+		WHERE a.descricao = '$descricao' AND a.data_atendimento BETWEEN '$dti' AND '$dtf'";
 	}
     $result = mysqli_query($conn, $sql);
 
