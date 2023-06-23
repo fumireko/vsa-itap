@@ -17,7 +17,7 @@ if(isset($_GET['filtro']) && isset($_GET['dti']) && isset($_GET['dtf'])){
 		if(!isset($_GET['descricao'])) 
 			$sql = "SELECT a.descricao, a.fkEndereco, e.regional, e.logradouro, e.numero_residencia 
 			FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco
-			WHERE e.bairro = $bairro AND a.data_atendimento BETWEEN '$dti' AND '$dtf'";
+			WHERE e.bairro = '$bairro' AND a.data_atendimento BETWEEN '$dti' AND '$dtf'";
 		else{
 			$descricao = $_GET['descricao'];
 			$sql = "SELECT a.descricao, a.fkEndereco, e.regional, e.logradouro, e.numero_residencia 
