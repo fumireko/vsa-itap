@@ -5,59 +5,118 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 $geojson = json_decode(file_get_contents('data.geojson'), true);
 
 if(isset($_GET['filtro']) && isset($_GET['dti']) && isset($_GET['dtf'])){
-    $features = array();
-    $descricoes = array();
 	
-	$dti = $_GET['dti'];
-	$dtf = $_GET['dtf'];
+	if(isset($_GET['b']) && $_GET['b'] != "filtro"){
+		$features = array();
+		$descricoes = array();
+		
+		$dti = $_GET['dti'];
+		$dtf = $_GET['dtf'];
+		$bairro = $_GET['b'];
 
-	if(!isset($_GET['descricao'])) 
-		$sql = "SELECT a.descricao, a.fkEndereco, e.regional, e.logradouro, e.numero_residencia 
-		FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco
-		WHERE a.data_atendimento BETWEEN '$dti' AND '$dtf'";
-	else{
-		$descricao = $_GET['descricao'];
-		$sql = "SELECT a.descricao, a.fkEndereco, e.regional, e.logradouro, e.numero_residencia 
-		FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco 
-		WHERE a.descricao = '$descricao' AND a.data_atendimento BETWEEN '$dti' AND '$dtf'";
+		if(!isset($_GET['descricao'])) 
+			$sql = "SELECT a.descricao, a.fkEndereco, e.regional, e.logradouro, e.numero_residencia 
+			FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco
+			WHERE e.bairro = $bairro AND a.data_atendimento BETWEEN '$dti' AND '$dtf'";
+		else{
+			$descricao = $_GET['descricao'];
+			$sql = "SELECT a.descricao, a.fkEndereco, e.regional, e.logradouro, e.numero_residencia 
+			FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco 
+			WHERE e.bairro = '$bairro' AND a.descricao = '$descricao' AND a.data_atendimento BETWEEN '$dti' AND '$dtf'";
+		}
+		$result = mysqli_query($conn, $sql);
+
+		while ($row = mysqli_fetch_assoc($result)){
+			if (!isset($descricoes[$row['fkEndereco']])) {
+				$descricoes[$row['fkEndereco']] = array();
+			}
+			$descricoes[$row['fkEndereco']][] = $row;
+		}
+
+		foreach ($geojson['features'] as &$feature) {
+			$fkEndereco = null;
+			foreach ($descricoes as $fk => $descArray) {
+				if (
+					$feature['properties']['regional'] === $descArray[0]['regional'] &&
+					$feature['properties']['id_eixo_novo_numero'] === $descArray[0]['logradouro'] &&
+					$feature['properties']['novo_numero'] === $descArray[0]['numero_residencia']
+				) {
+					$fkEndereco = $fk;
+					break;
+				}
+			}
+
+			if (isset($fkEndereco)) {
+				$descricao = '';
+				foreach ($descricoes[$fkEndereco] as $desc) {
+					if ($descricao !== '') {
+						$descricao .= ', ';
+					}
+					$descricao .= $desc['descricao'];
+				}
+				$feature['properties']['descricao'] = $descricao;
+				$features[] = $feature;
+			}
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode($features);
 	}
-    $result = mysqli_query($conn, $sql);
+	else{
+		$features = array();
+		$descricoes = array();
+		
+		$dti = $_GET['dti'];
+		$dtf = $_GET['dtf'];
 
-    while ($row = mysqli_fetch_assoc($result)){
-        if (!isset($descricoes[$row['fkEndereco']])) {
-            $descricoes[$row['fkEndereco']] = array();
-        }
-        $descricoes[$row['fkEndereco']][] = $row;
-    }
+		if(!isset($_GET['descricao'])) 
+			$sql = "SELECT a.descricao, a.fkEndereco, e.regional, e.logradouro, e.numero_residencia 
+			FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco
+			WHERE a.data_atendimento BETWEEN '$dti' AND '$dtf'";
+		else{
+			$descricao = $_GET['descricao'];
+			$sql = "SELECT a.descricao, a.fkEndereco, e.regional, e.logradouro, e.numero_residencia 
+			FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco 
+			WHERE a.descricao = '$descricao' AND a.data_atendimento BETWEEN '$dti' AND '$dtf'";
+		}
+		$result = mysqli_query($conn, $sql);
 
-    foreach ($geojson['features'] as &$feature) {
-        $fkEndereco = null;
-        foreach ($descricoes as $fk => $descArray) {
-            if (
-                $feature['properties']['regional'] === $descArray[0]['regional'] &&
-                $feature['properties']['id_eixo_novo_numero'] === $descArray[0]['logradouro'] &&
-                $feature['properties']['novo_numero'] === $descArray[0]['numero_residencia']
-            ) {
-                $fkEndereco = $fk;
-                break;
-            }
-        }
+		while ($row = mysqli_fetch_assoc($result)){
+			if (!isset($descricoes[$row['fkEndereco']])) {
+				$descricoes[$row['fkEndereco']] = array();
+			}
+			$descricoes[$row['fkEndereco']][] = $row;
+		}
 
-        if (isset($fkEndereco)) {
-            $descricao = '';
-            foreach ($descricoes[$fkEndereco] as $desc) {
-                if ($descricao !== '') {
-                    $descricao .= ', ';
-                }
-                $descricao .= $desc['descricao'];
-            }
-            $feature['properties']['descricao'] = $descricao;
-            $features[] = $feature;
-        }
-    }
+		foreach ($geojson['features'] as &$feature) {
+			$fkEndereco = null;
+			foreach ($descricoes as $fk => $descArray) {
+				if (
+					$feature['properties']['regional'] === $descArray[0]['regional'] &&
+					$feature['properties']['id_eixo_novo_numero'] === $descArray[0]['logradouro'] &&
+					$feature['properties']['novo_numero'] === $descArray[0]['numero_residencia']
+				) {
+					$fkEndereco = $fk;
+					break;
+				}
+			}
 
-    header('Content-Type: application/json');
-    echo json_encode($features);
+			if (isset($fkEndereco)) {
+				$descricao = '';
+				foreach ($descricoes[$fkEndereco] as $desc) {
+					if ($descricao !== '') {
+						$descricao .= ', ';
+					}
+					$descricao .= $desc['descricao'];
+				}
+				$feature['properties']['descricao'] = $descricao;
+				$features[] = $feature;
+			}
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode($features);
+	}
 }
 
 if(isset($_GET['lon']) && isset($_GET['lat'])){

@@ -68,6 +68,11 @@
 	else	
 		$descricao = "filtro";
 	
+	if(isset($_GET['bairro']))
+		$bairro = $_GET['bairro'];
+	else	
+		$bairro = "filtro";
+	
 	if(isset($_GET['setor']) && $_GET['setor'] != 99){
 		$setor = $_GET['setor'];
 		$query = "SELECT s.nome, e.bairro, COUNT(a.codigo) as max_val 
@@ -148,7 +153,7 @@
 			};
 		}
 
-		fetch("./get_lote.php?filtro=1&descricao=<?= $descricao ?>&dti=<?= $dti ?>&dtf=<?= $dtf ?>").then(response => response.json())
+		fetch("./get_lote.php?filtro=1&descricao=<?= $descricao ?>&dti=<?= $dti ?>&dtf=<?= $dtf ?>&b=<?= $bairro ?>").then(response => response.json())
 		.then(data => {
 			var geoJsonLayer = L.geoJSON(data).addTo(bairros);
 			map.fitBounds(geoJsonLayer.getBounds());
@@ -175,7 +180,7 @@
 			};
 		}
 
-		fetch("./get_lote.php?filtro=1&dti=<?= $dti ?>&dtf=<?= $dtf ?>").then(response => response.json())
+		fetch("./get_lote.php?filtro=1&dti=<?= $dti ?>&dtf=<?= $dtf ?>&b=<?= $bairro ?>").then(response => response.json())
 		.then(data => {
 			var geoJsonLayer = L.geoJSON(data).addTo(bairros);
 			map.fitBounds(geoJsonLayer.getBounds());

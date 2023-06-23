@@ -104,6 +104,8 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	  </div>
 	</div>
 	
+	<?php if($login === 'admin'): ?>
+	
 	<div class="container mt-3">
 	  <div class="bg-light p-5 rounded">
 		<h1>Mapas</h1>
@@ -156,14 +158,26 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 					<?php endWhile; ?>
 				</select>
 			</div>
+			<?php
+			$sql = 'SELECT DISTINCT bairro FROM endereco ORDER BY endereco.bairro ASC;';
+			$result = mysqli_query($conn, $sql);
+			?>
+			<div class="form-check form-switch">
+			  <input class="form-check-input" type="checkbox" role="switch" id="checkBairro">
+			  <label class="form-check-label" for="checkBairro">Filtrar por bairro</label>
+				<select class="form-select"id="selectBairro" name="bairro" disabled>
+					<option value="filtro">Todos</option>
+					<?php while($row = mysqli_fetch_assoc($result)): ?>
+					<option value='<?= $row["bairro"] ?>'><?= $row["bairro"] ?></option>
+					<?php endWhile; ?>
+				</select>
+			</div>
 		  <button type="submit" class="btn btn-sm col-12 mt-3 btn-primary">Gerar mapa</button>
 		</form>
 	  </div>
 	</div>
 	<script>
 	</script>
-	
-	<?php if($login === 'admin'): ?>
 		
 		<div class="container mt-3">
 		  <div class="bg-light rounded pb-3">
@@ -174,8 +188,8 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 			FROM atendimento a
 			INNER JOIN setor ON setor.codigo = a.fksetor
 			INNER JOIN endereco ON endereco.codigo = a.fkendereco
-			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico;
-			";
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			LIMIT 100";
 			$result = mysqli_query($conn, $sql);
 			?>	
 			<table class="table table-sm table-striped" id="tabela" style="font-size: 12px;">
@@ -211,7 +225,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 				<br>
 			</div>
 			<p class="text-center">
-				<a class="text-center" href="tabela.php">Filtros avançados</a>
+				<a class="text-center" href="tabela.php">Ver a tabela completa</a>
 				<a class="text-center" href="#topo">Voltar para o topo</a>
 			</p>
 			</div>
@@ -225,19 +239,26 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	//Filtros do mapa
 	$(document).ready(function() {
 	  const checkSetor = $('#checkSetor');
+	  const checkBairro =  $('#checkBairro');
 	  const checkAtendimento = $('#checkAtendimento');
 	  const selectSetor = $('#selectSetor');
+	  const selectBairro = $('#selectBairro');
 	  const selectAtendimento = $('#selectAtendimento');
 	  
 	  checkSetor.on('change', function() {
 		if (checkSetor.prop('checked')) {
 		  checkAtendimento.prop('checked', false);
+		  checkBairro.prop('disabled', true);
+		  checkBairro.prop('checked', false);
+		  selectBairro.prop('disabled', true);
 		  selectAtendimento.prop('disabled', true);
 		  selectSetor.prop('disabled', false);
 		}
 		else {
+		  checkBairro.prop('disabled', false);
 		  checkAtendimento.prop('checked', true);
 		  selectAtendimento.prop('disabled', false);
+		  selectBairro.prop('disabled', false);
 		  selectSetor.prop('disabled', true);
 		}
 	  });
@@ -247,11 +268,24 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 		  checkSetor.prop('checked', false);
 		  selectSetor.prop('disabled', true);
 		  selectAtendimento.prop('disabled', false);
+		  checkBairro.prop('disabled', false);
 		}
 		else {
 		  checkSetor.prop('checked', true);
 		  selectAtendimento.prop('disabled', true);
 		  selectSetor.prop('disabled', false);
+		  checkBairro.prop('checked', false);
+		  checkBairro.prop('disabled', true);
+		  selectBairro.prop('disabled', true);
+		}
+	  });
+	  
+	  checkBairro.on('change', function() {
+		if (checkBairro.prop('checked')) {
+		  selectBairro.prop('disabled', false);
+		}
+		else {
+		  selectBairro.prop('disabled', true);
 		}
 	  });
 	});
