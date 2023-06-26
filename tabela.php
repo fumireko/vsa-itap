@@ -57,7 +57,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	  for (let i = 0; i <= interval; i++) {
 		$('.progress-bar').css('width', progress + '%');
 		console.log(progress);
-		await new Promise(resolve => setTimeout(resolve, 1));
+		await new Promise(resolve => setTimeout(resolve, 25));
 		progress += increment;
 	  }
 
