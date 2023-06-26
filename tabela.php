@@ -48,6 +48,54 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 <body>
 	<?php if(isset($_COOKIE['auth']) && ($senha = $bcrypt || password_verify($senha, $bcrypt))): ?>
 	
+	<script>
+	async function progressBar(interval) {
+	  $('.progress-bar').css('width', '0%');
+	  const increment = 100 / interval;
+	  let progress = 0;
+
+	  for (let i = 0; i <= interval; i++) {
+		$('.progress-bar').css('width', progress + '%');
+		console.log(progress);
+		await new Promise(resolve => setTimeout(resolve, 1));
+		progress += increment;
+	  }
+
+	  // Garante que a barra de progresso atinja 100% no final
+	  $('.progress-bar').css('width', '100%');
+	  console.log('100');
+	}
+	progressBar(20);
+	</script>
+	
+	<div class="loading-bar" style="height: 4px">
+	  <div class="progress" style="height: 4px">
+		<div class="progress-bar" role="progressbar" style="height: 4px"></div>
+	  </div>
+	</div>
+	
+	<script>	
+	// Carrega a barra de progresso em 10 segundos
+
+    // var increment = 100 / (15 * 1000 / 100); // Divide por 1000 para converter de milissegundos para segundos
+	
+	// function updateProgressBar(progress) {
+		// $('.progress-bar').css('width', progress + '%');
+	// }
+	
+	// function animateProgressBar(progress, increment) {
+		// if (progress <= 100) {
+			// updateProgressBar(progress);
+			// progress += increment;
+			// setTimeout(function() {
+			// animateProgressBar(progress, increment);
+			// }, 100);
+		// }
+	// }
+
+    // animateProgressBar(0, increment);
+	</script>
+	
 	<div id="table-container"></div>
 
 	<nav class="navbar fixed-bottom navbar-dark bg-dark pb-4 text-light">
@@ -133,12 +181,14 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	}
 	
 	$(document).ready(function() {
+	  $('.loading-bar').show();			  
 	  $.ajax({
 		url: '/api/atendimentos',
 		type: 'GET',
 		dataType: 'json',
 		success: function(data) {
 		  // Cria a tabela
+		  $('.progress-bar').css('width', 100 + '%');
 		  var table = $('<table>');
 		  table.addClass('table');
 		  table.addClass('table-hover');
@@ -229,9 +279,12 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 				  // Adiciona a seta na coluna atual
 			  $('<span>').addClass('arrow').appendTo(th);
           });
+		  //$('.loading-bar').hide();
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 		  console.error(textStatus + ': ' + errorThrown);
+		  // Oculta a barra de carregamento em caso de erro
+		  $('.loading-bar').hide();
 		}
 	  });
 	});
