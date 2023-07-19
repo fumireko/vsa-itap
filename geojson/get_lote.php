@@ -50,7 +50,7 @@ if(isset($_GET['filtro']) && isset($_GET['dti']) && isset($_GET['dtf'])){
 				$descricao = '';
 				foreach ($descricoes[$fkEndereco] as $desc) {
 					if ($descricao !== '') {
-						$descricao .= ', ';
+						$descricao .= '<br>';
 					}
 					$descricao .= $desc['descricao'];
 				}
