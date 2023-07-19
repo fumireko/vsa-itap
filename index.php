@@ -176,9 +176,64 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 		</form>
 	  </div>
 	</div>
-	<script>
-	</script>
 		
+	<div class="container mt-3">
+	  <div class="bg-light p-5 rounded">
+		<h1>Relatórios</h1>
+		<p class="lead">Use os filtros abaixo para gerar relatórios.</p>
+		<form action="relatorio.php" method="get">
+			<?php
+			$sql = "SELECT 
+			(SELECT data_atendimento FROM atendimento ORDER BY data_atendimento ASC LIMIT 1) AS min_data,
+			(SELECT data_atendimento FROM atendimento ORDER BY data_atendimento DESC LIMIT 1) AS max_data;";
+			$row = mysqli_fetch_assoc(mysqli_query($conn, $sql));
+			?>
+			<div class="mb-3 row">
+			  <div class="col-6">
+				  <label class="form-check-label" for="inputData">Data inicial:</label>
+				  <input class="form-control" type="date" name="dti" id="dtInicial"
+				  min="<?= $row['min_data'] ?>" max="<?= $row['max_data'] ?>" value="<?= $row['min_data'] ?>">
+			  </div>
+			 
+			  <div class="col-6">
+				  <label class="form-check-label" for="inputData">Data final:</label>
+				  <input class="form-control" type="date" name="dtf" id="dtFinal"
+				  min="<?= $row['min_data'] ?>" max="<?= $row['max_data'] ?>" value="<?= $row['max_data'] ?>">
+			  </div>
+			</div>
+			<?php
+			$sql = 'select distinct a.fksetor, s.nome from atendimento a inner join setor s on (s.codigo = a.fksetor) where s.nome != "Teste"';
+			$result = mysqli_query($conn, $sql);
+			?>
+			<div class="form-check form-switch">
+			  <input class="form-check-input" type="checkbox" role="switch" id="RcheckSetor" checked>
+			  <label class="form-check-label" for="RcheckSetor">Filtrar por setor</label>
+				<select class="form-select" id="RselectSetor" name="setor">
+					<option value="99">Todos</option>
+					<?php while($row = mysqli_fetch_assoc($result)): ?>
+					<option value='<?= $row["fksetor"] ?>'><?= $row["nome"] ?></option>
+					<?php endWhile; ?>
+				</select>
+			</div>
+			<?php
+			$sql = 'SELECT DISTINCT bairro FROM endereco ORDER BY endereco.bairro ASC;';
+			$result = mysqli_query($conn, $sql);
+			?>
+			<div class="form-check form-switch">
+			  <input class="form-check-input" type="checkbox" role="switch" id="RcheckBairro">
+			  <label class="form-check-label" for="RcheckBairro">Filtrar por bairro</label>
+				<select class="form-select"id="RselectBairro" name="bairro" disabled>
+					<option value="filtro">Todos</option>
+					<?php while($row = mysqli_fetch_assoc($result)): ?>
+					<option value='<?= $row["bairro"] ?>'><?= $row["bairro"] ?></option>
+					<?php endWhile; ?>
+				</select>
+			</div>
+		  <button type="submit" class="btn btn-sm col-12 mt-3 btn-primary">Gerar relatório</button>
+		</form>
+	  </div>
+	</div>
+	
 		<div class="container mt-3">
 		  <div class="bg-light rounded pb-3">
 			<h1 class="text-center pt-3" id="topo">Lista de atendimentos</h1>
@@ -238,11 +293,15 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
   <script>
 	//Filtros do mapa
 	$(document).ready(function() {
+	  const RcheckSetor = $('#RcheckSetor');
+	  const RcheckBairro =  $('#RcheckBairro');
 	  const checkSetor = $('#checkSetor');
 	  const checkBairro =  $('#checkBairro');
 	  const checkAtendimento = $('#checkAtendimento');
 	  const selectSetor = $('#selectSetor');
 	  const selectBairro = $('#selectBairro');
+	  const RselectSetor = $('#RselectSetor');
+	  const RselectBairro = $('#RselectBairro');
 	  const selectAtendimento = $('#selectAtendimento');
 	  
 	  checkSetor.on('change', function() {
@@ -263,6 +322,20 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 		}
 	  });
 	  
+	  RcheckSetor.on('change', function() {
+		if (RcheckSetor.prop('checked')) {
+		  RcheckBairro.prop('disabled', true);
+		  RcheckBairro.prop('checked', false);
+		  RselectBairro.prop('disabled', true);
+		  RselectSetor.prop('disabled', false);
+		}
+		else {
+		  RcheckBairro.prop('disabled', false);
+		  RselectBairro.prop('disabled', false);
+		  RselectSetor.prop('disabled', true);
+		}
+	  });
+	  
 	  checkAtendimento.on('change', function() {
 		if (checkAtendimento.prop('checked')) {
 		  checkSetor.prop('checked', false);
@@ -277,6 +350,15 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 		  checkBairro.prop('checked', false);
 		  checkBairro.prop('disabled', true);
 		  selectBairro.prop('disabled', true);
+		}
+	  });
+	  
+	  RcheckBairro.on('change', function() {
+		if (RcheckBairro.prop('checked')) {
+		  RselectBairro.prop('disabled', false);
+		}
+		else {
+		  RselectBairro.prop('disabled', true);
 		}
 	  });
 	  
