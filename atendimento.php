@@ -181,7 +181,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 				<span class="invalid-feedback"><?= $nisError ?></span>
 				<?php else: ?>
 				<select list="atendimentos-setor" class="input-text col-4" type="text" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
-				<input class="input-text col-4" type="text" id="nis" name="nis" placeholder="NIS" required autocomplete="off">
+				<input class="input-text col-4" type="tel" id="nis" name="nis" placeholder="NIS" required autocomplete="off">
 				<input class="input-text col-4" type="date" id="data_atendimento" name="data_atendimento" required>
 				<?php endif; ?>
 				
