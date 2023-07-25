@@ -423,21 +423,12 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
     function showError(error) {
       console.error(error.message);
 	}
-	
-	  //Puxa o endereço da localização atual e atualiza a barra de progresso
+	  
 	  function checkLote(){
-	    navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
-		  if (result.state === 'granted') {
-			navigator.geolocation.getCurrentPosition(showLocation);
-		  } else if (result.state === 'prompt') {
-			progressBar.style.display = 'block';
-			progressBar.style.width = '2%';
-			fillProgressBar(2, 67);
-			navigator.geolocation.getCurrentPosition(showLocation, showError);
-		  } else if (result.state === 'denied') {
-			showError(new Error('User denied geolocation'));
-		  }
-		});
+		progressBar.style.display = 'block';
+		progressBar.style.width = '2%';
+		fillProgressBar(2, 67);
+		navigator.geolocation.getCurrentPosition(showLocation);
 	  }
 	  
 	  //Popula as datalists
