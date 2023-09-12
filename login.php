@@ -29,7 +29,9 @@
 			
 			if(password_verify($senha, $row['senha'])){
 				setcookie('auth', $login.':'.$row['senha'].':'.$row['setor'], time()+3600*24*30);
+				ob_start();
 				header("Location: /");
+				ob_end_flush();
 			} else $senhaError = "Senha incorreta.";
 		}
 	}

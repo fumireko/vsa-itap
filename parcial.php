@@ -15,7 +15,12 @@ $sql = "SELECT codigo, senha FROM tecnico WHERE login = '$login'";
 @$fkTecnico = mysqli_fetch_assoc(mysqli_query($conn, $sql))['codigo'];
 @$fkEndereco = 9999;
 
-if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh: 0"); }
+if(isset($_POST['limpar'])){
+	setcookie('auth', '', time()-3600); 
+	ob_start();
+	header("Refresh: 0"); 
+	ob_end_flush();
+}
 
 //Valida o NIS e seta a mensagem de erro
 if(isset($_POST['nis']) && !isset($_POST['sem_nis'])){

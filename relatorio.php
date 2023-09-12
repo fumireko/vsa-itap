@@ -12,7 +12,12 @@ $sql = "SELECT senha FROM tecnico WHERE login = '$login'";
 	
 @$bcrypt = mysqli_fetch_assoc(mysqli_query($conn, $sql))['senha'];
 
-if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh: 0"); }
+if(isset($_POST['limpar'])){
+	setcookie('auth', '', time()-3600); 
+	ob_start();
+	header("Refresh: 0"); 
+	ob_end_flush();
+}
 ?>
 
 <!DOCTYPE html>

@@ -61,7 +61,9 @@
 			if ($http_code === 201) {
 				$data['success'] = true;
 				setcookie('auth', $data['login'].':'.$senha.':'.$data['setor'], time()+3600*24*30);
+				ob_start();
 				header("Location: login.php");
+				ob_end_flush();
 			}
 			else if ($http_code === 409) {
 				$data['success'] = false;

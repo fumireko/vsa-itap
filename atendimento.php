@@ -14,7 +14,12 @@ $sql = "SELECT codigo, senha FROM tecnico WHERE login = '$login'";
 @$bcrypt = mysqli_fetch_assoc(mysqli_query($conn, $sql))['senha'];
 @$fkTecnico = mysqli_fetch_assoc(mysqli_query($conn, $sql))['codigo'];
 
-if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh: 0"); }
+if(isset($_POST['limpar'])){
+	setcookie('auth', '', time()-3600); 
+	ob_start();
+	header("Refresh: 0"); 
+	ob_end_flush();
+}
 
 //Precisa desse trecho aqui pra jogar os dados do mapa no leaflet
 if(isset($_POST['logradouro']) && isset($_POST['numero_predial']) && !empty($_POST['logradouro']) && !empty($_POST['numero_predial'])){
