@@ -66,7 +66,8 @@ if(isset($_POST['limpar'])){
 	</style>
   </head>
   <body>
-  <?php if(isset($_COOKIE['auth']) && ($senha = $bcrypt || password_verify($senha, $bcrypt))): ?>
+  <?php if(!isset($_COOKIE['auth']) && !($senha = $bcrypt || password_verify($senha, $bcrypt))): header("Location: login.php") ?>
+  <?php else: ?>
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark" style="font-size: 12px;">
 	  <div class="container-fluid col">
 		<p class="text-light mt-3 col-10">Você acessou como <b><?= $login ?></b>. Hoje é <?= utf8_encode(strftime('%A, %d de %B de %Y')); ?>.</p>
@@ -291,8 +292,6 @@ if(isset($_POST['limpar'])){
 			</div>
 		</div>	
 	<?php endif; ?>
-	
-  <?php else: header("Location: login.php"); ?>
   <?php endif; ?>
   </body>
   <script>
