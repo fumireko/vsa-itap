@@ -1,3 +1,76 @@
+<?php
+require 'config/config.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	$data = array();
+
+	//Validação
+	if (empty($_POST['nome']) || !preg_match("/^[a-zA-ZÀ-ÿ0-9 ]*$/u", $_POST["nome"])) 
+		$nomeError = "Há caracteres inválidos no nome.";
+	else $data['nome'] = test_input($_POST["nome"]);
+
+	if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) 
+		$emailError = "Endereço de e-mail inválido.";
+	else $data['email'] = test_input($_POST["email"]);
+
+	if (!preg_match("/^[a-zA-Z0-9]*$/",$_POST['login'])) 
+		$loginError = "Login inválido. Somente caracteres alfanuméricos são permitidos.";
+	else $data['login'] = test_input($_POST["login"]);
+
+	if (empty($_POST['senha'])) {
+		$senhaError = "Senha inválida. A senha não pode estar em branco.";
+	} else {
+		$senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+		$data['senha'] = $senha;
+	}
+	
+	if (empty($_POST['setor']) || $_POST['setor'] == "Escolha um setor") 
+		$setorError = "Selecione uma opção.";
+	else $data['setor'] = test_input($_POST["setor"]);
+
+	//Endpoint
+	if(!empty($data['email']) && !empty($data['login']) && !empty($data['senha']) && !empty($data['setor'])){
+
+		$endpoint_url = "http://" . $_SERVER['SERVER_NAME'] . "/api/tecnicos";
+
+		$post_data = json_encode(array(
+			'nome' => $data['nome'],
+			'email' => $data['email'],
+			'login' => $data['login'],
+			'senha' => $senha,
+			'setor' => $data['setor']
+		));
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $endpoint_url);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+		$response = curl_exec($ch);
+		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+
+		if ($http_code === 201) {
+			$data['success'] = true;
+			setcookie('auth', $data['login'].':'.$senha.':'.$data['setor'], time()+3600*24*30);
+			ob_start();
+			header("Location: login.php");
+			ob_end_flush();
+		}
+		else if ($http_code === 409) {
+			$data['success'] = false;
+			$loginError = 'Já existe um usuário com o mesmo login.';
+		}
+		else {
+			$data['success'] = false;
+			$data['error'] = 'Usuário ou senha inválidos.';
+		}
+		
+	}
+}
+?>
+
 <html>
     <head>
         <title></title>
@@ -5,79 +78,6 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     </head>
     <body>
-	<?php
-	require 'config/config.php';
-
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		$data = array();
-
-		//Validação
-		if (empty($_POST['nome']) || !preg_match("/^[a-zA-ZÀ-ÿ0-9 ]*$/u", $_POST["nome"])) 
-			$nomeError = "Há caracteres inválidos no nome.";
-		else $data['nome'] = test_input($_POST["nome"]);
-
-		if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) 
-			$emailError = "Endereço de e-mail inválido.";
-		else $data['email'] = test_input($_POST["email"]);
-
-		if (!preg_match("/^[a-zA-Z0-9]*$/",$_POST['login'])) 
-			$loginError = "Login inválido. Somente caracteres alfanuméricos são permitidos.";
-		else $data['login'] = test_input($_POST["login"]);
-
-		if (empty($_POST['senha'])) {
-			$senhaError = "Senha inválida. A senha não pode estar em branco.";
-		} else {
-			$senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
-			$data['senha'] = $senha;
-		}
-		
-		if (empty($_POST['setor']) || $_POST['setor'] == "Escolha um setor") 
-			$setorError = "Selecione uma opção.";
-		else $data['setor'] = test_input($_POST["setor"]);
-
-		//Endpoint
-		if(!empty($data['email']) && !empty($data['login']) && !empty($data['senha']) && !empty($data['setor'])){
-
-			$endpoint_url = "http://" . $_SERVER['SERVER_NAME'] . "/api/tecnicos";
-
-			$post_data = json_encode(array(
-				'nome' => $data['nome'],
-				'email' => $data['email'],
-				'login' => $data['login'],
-				'senha' => $senha,
-				'setor' => $data['setor']
-			));
-
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $endpoint_url);
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-			$response = curl_exec($ch);
-			$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close($ch);
-
-			if ($http_code === 201) {
-				$data['success'] = true;
-				setcookie('auth', $data['login'].':'.$senha.':'.$data['setor'], time()+3600*24*30);
-				ob_start();
-				header("Location: login.php");
-				ob_end_flush();
-			}
-			else if ($http_code === 409) {
-				$data['success'] = false;
-				$loginError = 'Já existe um usuário com o mesmo login.';
-			}
-			else {
-				$data['success'] = false;
-				$data['error'] = 'Usuário ou senha inválidos.';
-			}
-			
-		}
-	}
-	?>
-
         <form class="m-5" method="post" action="<?= $_SERVER['PHP_SELF'] ?>">
 		
 			<?php

@@ -1,10 +1,10 @@
 <?php
 //MySQL config
 //Preencha com os seus dados
-$servername = ""; 
-$username = "";
-$password = "";
-$dbname = "";
+$servername = "localhost"; 
+$username = "pmitaperucu_smas";
+$password = "DN,.BQ75[*y@";
+$dbname = "pmitaperucu_vigilanciasocioassistencial";
 
 function test_input($data) {
 	if(!empty($data)){
