@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 //Verificar o cookie
 require 'config/config.php';
 setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
@@ -19,6 +21,13 @@ if(isset($_POST['limpar'])){
 	ob_start();
 	header("Refresh: 0"); 
 	ob_end_flush();
+}
+
+if (!isset($_COOKIE['auth']) || !($senha == $bcrypt || password_verify($senha, $bcrypt))) {
+    ob_start();
+    header("Location: login.php");
+    ob_end_flush();
+    exit; // Ensure that the script stops executing here
 }
 
 //Precisa desse trecho aqui pra jogar os dados do mapa no leaflet
@@ -48,7 +57,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 
 		$endpoint_url = "http://" . $_SERVER['SERVER_NAME'] . "/api/atendimentos";
 
-		echo $post_data = json_encode(array(
+		$post_data = json_encode(array(
 			'fkTecnico' => intval($data['tecnico']),
 			'fkSetor' => intval($data['setor']),
 			'fkEndereco' => intval($data['endereco']),
@@ -64,12 +73,14 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		$response = curl_exec($ch);
-		echo $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 		
 		if ($http_code === 201) {
 			$data['success'] = true;
+			ob_start();
 			header("Location: /?s=1");
+			ob_end_flush();
 		} else {
 			$data['success'] = false;
 			$data['error'] = 'Dados inválidos.';

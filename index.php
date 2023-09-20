@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 //Verificar o cookie
 require 'config/config.php';
 setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
@@ -18,8 +20,12 @@ if(isset($_POST['limpar'])){
 	header("Refresh: 0"); 
 	ob_end_flush();
 }
-?>
 
+if (!isset($_COOKIE['auth']) || !($senha == $bcrypt || password_verify($senha, $bcrypt))) {
+    header("Location: login.php");
+    exit; // Ensure that the script stops executing here
+}
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -66,7 +72,10 @@ if(isset($_POST['limpar'])){
 	</style>
   </head>
   <body>
-  <?php if(isset($_COOKIE['auth']) && ($senha = $bcrypt || password_verify($senha, $bcrypt))): ?>
+      
+  <?php if(!isset($_COOKIE['auth']) && !($senha = $bcrypt || password_verify($senha, $bcrypt))): header("Location: login.php");  ?>
+  <?php else: ?>
+  
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark" style="font-size: 12px;">
 	  <div class="container-fluid col">
 		<p class="text-light mt-3 col-10">Você acessou como <b><?= $login ?></b>. Hoje é <?= utf8_encode(strftime('%A, %d de %B de %Y')); ?>.</p>
@@ -291,8 +300,6 @@ if(isset($_POST['limpar'])){
 			</div>
 		</div>	
 	<?php endif; ?>
-	
-  <?php else: header("Location: login.php"); ?>
   <?php endif; ?>
   </body>
   <script>

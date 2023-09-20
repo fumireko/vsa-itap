@@ -41,7 +41,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 
 		$endpoint_url = "http://" . $_SERVER['SERVER_NAME'] . "/api/atendimentos";
 
-		echo $post_data = json_encode(array(
+		$post_data = json_encode(array(
 			'fkTecnico' => intval($data['tecnico']),
 			'fkSetor' => intval($data['setor']),
 			'fkEndereco' => intval($data['endereco']),
@@ -57,7 +57,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		$response = curl_exec($ch);
-		echo $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 		
 		if ($http_code === 201) {
