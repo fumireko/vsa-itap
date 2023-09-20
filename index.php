@@ -72,21 +72,10 @@ if (!isset($_COOKIE['auth']) || !($senha == $bcrypt || password_verify($senha, $
 	</style>
   </head>
   <body>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 658ea5c589cad715cf85a419276caddbd1bda4a8
       
   <?php if(!isset($_COOKIE['auth']) && !($senha = $bcrypt || password_verify($senha, $bcrypt))): header("Location: login.php");  ?>
   <?php else: ?>
   
-<<<<<<< HEAD
-=======
-=======
-  <?php if(!isset($_COOKIE['auth']) && !($senha = $bcrypt || password_verify($senha, $bcrypt))): header("Location: login.php") ?>
-  <?php else: ?>
->>>>>>> a690cb35f068c22a9696f6f76ce91ed21332b9ed
->>>>>>> 658ea5c589cad715cf85a419276caddbd1bda4a8
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark" style="font-size: 12px;">
 	  <div class="container-fluid col">
 		<p class="text-light mt-3 col-10">Você acessou como <b><?= $login ?></b>. Hoje é <?= utf8_encode(strftime('%A, %d de %B de %Y')); ?>.</p>
