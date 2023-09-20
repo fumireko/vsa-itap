@@ -18,15 +18,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		if ($conn->connect_error) {
 		  die("Conexão falhou: " . $conn->connect_error);
 		}
-		$sql = "SELECT senha, setor FROM tecnico WHERE login = '$login'";
+		$sql = "SELECT senha, setor, ativo FROM tecnico WHERE login = '$login'";
 		$result = mysqli_query($conn, $sql);
 		$row = mysqli_fetch_assoc($result);
 		
 		if(password_verify($senha, $row['senha'])){
-			setcookie('auth', $login.':'.$row['senha'].':'.$row['setor'], time()+3600*24*30);
-			ob_start();
-			header("Location: /");
-			ob_end_flush();
+			if($row['ativo'] != 0){
+				setcookie('auth', $login.':'.$row['senha'].':'.$row['setor'], time()+3600*24*30);
+				ob_start();
+				header("Location: /");
+				ob_end_flush();
+			}
+			else $senhaError = "Seu login está inativo.";
 		} else $senhaError = "Senha incorreta.";
 	}
 }
