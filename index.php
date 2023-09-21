@@ -15,14 +15,14 @@ $sql = "SELECT senha, ativo FROM tecnico WHERE login = '$login'";
 @$bcrypt = mysqli_fetch_assoc(mysqli_query($conn, $sql))['senha'];
 @$ativo = mysqli_fetch_assoc(mysqli_query($conn, $sql))['ativo'];
 
-if(isset($_POST['limpar']) || $ativo == 0){
+if(isset($_POST['limpar']) || $ativo === 0){
 	setcookie('auth', '', time()-3600); 
 	ob_start();
 	header("Refresh: 0"); 
 	ob_end_flush();
 }
 
-if ($ativo == 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_verify($senha, $bcrypt))) {
+if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_verify($senha, $bcrypt))) {
     header("Location: login.php");
     exit; // Ensure that the script stops executing here
 }

@@ -23,13 +23,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$row = mysqli_fetch_assoc($result);
 		
 		if(password_verify($senha, $row['senha'])){
-			if($row['ativo'] != 0){
+			//if($row['ativo'] != 0){
 				setcookie('auth', $login.':'.$row['senha'].':'.$row['setor'], time()+3600*24*30);
 				ob_start();
 				header("Location: /");
 				ob_end_flush();
-			}
-			else $senhaError = "Seu login está inativo.";
+			//}
+			//else $senhaError = "Seu login está inativo.";
 		} else $senhaError = "Senha incorreta.";
 	}
 }
