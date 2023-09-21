@@ -2,9 +2,9 @@
 //MySQL config
 //Preencha com os seus dados
 $servername = "localhost"; 
-$username = "root";
-$password = "";
-$dbname = "visa";
+$username = "pmitaperucu_smas";
+$password = "DN,.BQ75[*y@";
+$dbname = "pmitaperucu_vigilanciasocioassistencial";
 
 function test_input($data) {
 	if(!empty($data)){
