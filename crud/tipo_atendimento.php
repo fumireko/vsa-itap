@@ -127,10 +127,10 @@ while ($row = $result->fetch_assoc()) {
 			  </tbody>
 			</table>
 				<div class="d-flex justify-content-center mb-3">
-					<div class="px-2 mx-2 bd-highlight"></div>
 					<input class="form-control h-25 text-center" type="text" id="filtro-tabela" placeholder="Pesquisar na tabela...">
-					<div class="px-2 mx-2 bd-highlight"></div>
-					<br>
+				</div>
+				<div class="px-2 mx-2 text-center">
+					<a href="../">Voltar para a página inicial</a>
 				</div>
 			</div>
 		</div>	
