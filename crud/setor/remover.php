@@ -30,6 +30,8 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 if(isset($_POST['codigo']) && isset($_POST['nome'])){
 	$nome = $_POST['nome'];
 	$codigo = $_POST['codigo'];
+	mysqli_query($conn, "DELETE FROM tecnico where setor = $codigo");
+	mysqli_query($conn, "DELETE FROM tipo_atendimento where setor = $codigo");
 	mysqli_query($conn, "DELETE FROM `setor` WHERE `setor`.`codigo` = $codigo");
 	ob_start();
 	header("Location: ../setor.php"); 
@@ -86,7 +88,7 @@ if(isset($_POST['codigo']) && isset($_POST['nome'])){
 		<div class="container mt-3">
 		  <div class="bg-light rounded pb-3">
 			<h1 class="text-center pt-3" id="topo">Remover setor</h1>
-			<p class="text-center">A remoção de um setor exclui todos os técnicos pertencentes ao mesmo.</p>
+			<h1 class="text-center text-danger fs-1 fw-bold">A remoção de um setor exclui TODOS os técnicos pertencentes ao mesmo.</h1>
 			
 			<?php
 			$codigo = $_GET['i'];
@@ -94,7 +96,7 @@ if(isset($_POST['codigo']) && isset($_POST['nome'])){
 			$result = mysqli_query($conn, $sql);
 			?>	
 			<form class="mx-5 mb-3" method="post" action="<?= $_SERVER['PHP_SELF'] ?>">
-				<p class="my-0 text-center text-danger fs-5">Confirme a remoção do setor abaixo:</p>
+				<h1 class="my-0 text-center text-danger fs-1">Confirme a remoção do setor abaixo:</h1>
 				<label>Nome do setor:</label>
 				<input class="form-control" type="text" name="nome" value="<?= mysqli_fetch_assoc($result)["nome"] ?>" readonly>
 				<label>Código:</label>
