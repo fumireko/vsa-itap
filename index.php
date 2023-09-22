@@ -250,6 +250,18 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 	</div>
 	
 		<div class="container mt-3">
+		  <div class="bg-light rounded pb-3 text-center">
+			<h1 class="text-center pt-3" id="topo">Gerenciar entidades</h1>
+			<p class="lead">Use os botões abaixo para criar, editar e remover técnicos, setores e tipos de atendimento.</p>
+			<div class="input-group px-5">
+				<a href="crud/tecnico.php" class="btn btn-sm btn-outline-secondary col-4 mt-2">Técnicos</a>
+				<a href="crud/setor.php" class="btn btn-sm btn-outline-secondary col-4 mt-2">Setores</a>
+				<a href="crud/tipo_atendimento.php" class="btn btn-sm btn-outline-secondary col-4 mt-2">Tipos de atendimento</a>
+			</div>
+		  </div>
+		</div>
+	
+		<div class="container mt-3">
 		  <div class="bg-light rounded pb-3">
 			<h1 class="text-center pt-3" id="topo">Lista de atendimentos</h1>
 			<p class="text-center"><a class="text-center" href="#filtro-tabela">Ir para o final</a></p>
