@@ -249,9 +249,9 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 	  </div>
 	</div>
 	
-		<div class="container mt-3">
+		<div class="container mt-3" id="entidades">
 		  <div class="bg-light rounded pb-3 text-center">
-			<h1 class="text-center pt-3" id="topo">Gerenciar entidades</h1>
+			<h1 class="text-center pt-3" id="topo">Gerenciar</h1>
 			<p class="lead">Use os botões abaixo para criar, editar e remover técnicos, setores e tipos de atendimento.</p>
 			<div class="input-group px-5">
 				<a href="crud/tecnico.php" class="btn btn-sm btn-outline-secondary col-4 mt-2">Técnicos</a>

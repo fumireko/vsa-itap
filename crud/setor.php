@@ -122,7 +122,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 					<input class="form-control h-25 text-center" type="text" id="filtro-tabela" placeholder="Pesquisar na tabela...">
 				</div>
 				<div class="px-2 mx-2 text-center">
-					<a href="../">Voltar para a página inicial</a>
+					<a href="../#gerenciar">Voltar para a página inicial</a>
 				</div>
 			</div>
 		</div>	
