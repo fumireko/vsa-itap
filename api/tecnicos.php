@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SERVER['REQUEST_URI'] === '/api/t
     exit;
   }
 
-  $sql = "INSERT INTO tecnico (nome, email, login, senha, setor) VALUES ('$nome', '$email', '$login', '$senha', $setor)";
+  $sql = "INSERT INTO tecnico (nome, email, login, senha, setor, ativo) VALUES ('$nome', '$email', '$login', '$senha', $setor, 1)";
   if ($conn->query($sql) === TRUE) {
     http_response_code(201);
   } else {

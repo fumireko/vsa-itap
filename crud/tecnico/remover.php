@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 //Verificar o cookie
-require '../config/config.php';
+require '../../config/config.php';
 setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 
 @$login = explode(':', $_COOKIE['auth'])[0];
@@ -23,15 +23,25 @@ if(isset($_POST['limpar']) || $ativo === 0){
 }
 
 if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_verify($senha, $bcrypt))) {
-    header("Location: ../login.php");
+    header("Location: ../../login.php");
     exit; // Ensure that the script stops executing here
 }
 
-$sql = "SELECT codigo, nome FROM setor";
-$result = $conn->query($sql);
-$setores = array();
-while ($row = $result->fetch_assoc()) {
-    $setores[$row["codigo"]] = $row["nome"];
+if(isset($_POST['tipo'])){
+	if($_POST['tipo'] == "desativar"){
+		$codigo = $_POST['codigo'];
+		mysqli_query($conn, "UPDATE tecnico SET ativo = 0 where codigo = $codigo");
+		ob_start();
+		header("Location: ../tecnico.php"); 
+		ob_end_flush();
+	}
+	if($_POST['tipo'] == "ativar"){
+		$codigo = $_POST['codigo'];
+		mysqli_query($conn, "UPDATE tecnico SET ativo = 1 where codigo = $codigo");
+		ob_start();
+		header("Location: ../tecnico.php"); 
+		ob_end_flush();
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -43,18 +53,6 @@ while ($row = $result->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
 	<style>
-	.input-text {
-		padding: .375rem .75rem;
-		font-size: 1rem;
-		font-weight: 400;
-		line-height: 1.5;
-		color: var(--bs-body-color);
-		background-color: var(--bs-body-bg);
-		background-clip: padding-box;
-		border: var(--bs-border-width) solid var(--bs-border-color);
-		border-radius: var(--bs-border-radius);
-		transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-	}
 	.arrow {
 	  display: inline-block;
 	  margin-left: 5px;
@@ -78,7 +76,7 @@ while ($row = $result->fetch_assoc()) {
   </head>
   <body>
       
-  <?php if(!isset($_COOKIE['auth']) && !($senha = $bcrypt || password_verify($senha, $bcrypt))): header("Location: ../login.php");  ?>
+  <?php if(!isset($_COOKIE['auth']) && !($senha = $bcrypt || password_verify($senha, $bcrypt))): header("Location: ../../login.php");  ?>
   <?php else: ?>
   
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark" style="font-size: 12px;">
@@ -92,104 +90,54 @@ while ($row = $result->fetch_assoc()) {
 	</nav>
 	
 	<div class="container mt-3">
-	<?php if($login === 'admin'): ?>
+	<?php if($login === 'admin'): ?>		
 		<div class="container mt-3">
 		  <div class="bg-light rounded pb-3">
-			<h1 class="text-center pt-3" id="topo">Lista de técnicos</h1>
-			<p class="text-center">
-			<a href="../register.php" class="col-3 btn btn-sm btn-success">Novo técnico</a>
-			</p>
+		  
 			<?php
-			$sql = "SELECT * FROM tecnico";
+			$codigo = $_GET['i'];
+			$sql = "SELECT * FROM tecnico where codigo = $codigo";
 			$result = mysqli_query($conn, $sql);
+			$ativo = mysqli_fetch_assoc($result)["ativo"];
+			$result = mysqli_query($conn, $sql);
+			$nome = mysqli_fetch_assoc($result)["nome"];
 			?>	
-			<table class="table table-sm table-striped" id="tabela" style="font-size: 12px;">
-			  <thead>
-				<tr>
-					<th>Código</th>
-					<th>Nome</th>
-					<th>Login</th>
-					<th>Setor</th>
-					<th>Inativo</th>
-					<th>Ações</th>
-				</tr>
-			  </thead>
-			  <tbody>
-				<?php while($row = mysqli_fetch_assoc($result)): ?>
-					<tr>
-						<td><?= $row["codigo"] ?></td>
-						<td><?= $row["nome"] ?> </td>
-						<td><?= $row["login"] ?></td>
-						<td><?= $setores[$row["setor"]] ?></td>
-						<td><?= $row["ativo"] ?> </td>
-						<td class="d-flex justify-content-center">
-						<button class="col-4 btn btn-sm btn-primary">Editar</button>
-						<button class="col-4 btn btn-sm btn-danger">Remover</button>
-						</td>
-					</tr>
-				<?php endWhile; ?>
-			  </tbody>
-			</table>
-				<div class="d-flex justify-content-center mb-3">
-					<div class="px-2 mx-2 bd-highlight"></div>
-					<input class="form-control h-25 text-center" type="text" id="filtro-tabela" placeholder="Pesquisar na tabela...">
-					<div class="px-2 mx-2 bd-highlight"></div>
-					<br>
+			
+			<?php if($ativo == 1): ?>
+			<h1 class="text-center pt-3" id="topo">Desativar técnico</h1>
+			<p class="text-center">O técnico não poderá acessar o sistema enquanto o seu login estiver inativo.</p>
+			<form class="mx-5 mb-3" method="post" action="<?= $_SERVER['PHP_SELF'] ?>">
+				<p class="my-0 text-center text-danger fs-5">Confirme para desativar o técnico abaixo:</p>
+				<label>Nome:</label>
+				<input class="form-control" type="text" name="tipo" value="<?= $nome ?>" readonly>
+				<label>Código:</label>
+				<input class="form-control" type="number" name="codigo" value="<?= $codigo ?>" readonly>
+				<input type="hidden" name="tipo" value="desativar">
+				<div class="input-group">
+					<button class="btn btn-sm btn-danger col-6 mt-2" type="submit">Desativar</button>
+					<a class="btn btn-sm btn-secondary col-6 mt-2" href="../tecnico.php">Cancelar</a>
 				</div>
+			</form>
+			<?php else: ?>
+			<h1 class="text-center pt-3" id="topo">Ativar técnico</h1>
+			<p class="text-center">O técnico não poderá acessar o sistema enquanto o seu login estiver inativo.</p>
+			<form class="mx-5 mb-3" method="post" action="<?= $_SERVER['PHP_SELF'] ?>">
+				<p class="my-0 text-center text-primary fs-5">Confirme para ativar o técnico abaixo:</p>
+				<label>Nome:</label>
+				<input class="form-control" type="text" name="tipo" value="<?= $nome ?>" readonly>
+				<label>Código:</label>
+				<input class="form-control" type="number" name="codigo" value="<?= $codigo ?>" readonly>
+				<input type="hidden" name="tipo" value="ativar">
+				<div class="input-group">
+					<button class="btn btn-sm btn-primary col-6 mt-2" type="submit">Ativar</button>
+					<a class="btn btn-sm btn-secondary col-6 mt-2" href="../tecnico.php">Cancelar</a>
+				</div>
+			</form>
+			<?php endif; ?>
+				
 			</div>
 		</div>	
 	<?php endif; ?>
   <?php endif; ?>
   </body>
-  <script>
-		function compareRowsAsc(row1, row2, index) {
-		  var tdValue1 = row1.cells[index].textContent;
-		  var tdValue2 = row2.cells[index].textContent;
-		  return tdValue1.localeCompare(tdValue2);
-		}
-
-		function compareRowsDesc(row1, row2, index) {
-		  var tdValue1 = row1.cells[index].textContent;
-		  var tdValue2 = row2.cells[index].textContent;
-		  return tdValue2.localeCompare(tdValue1);
-		}
-
-		function sortTable(columnIndex, ascending) {
-		  var tbody = document.querySelector("#tabela tbody");
-		  var rows = Array.from(tbody.querySelectorAll("tr"));
-		  var compareRows = ascending ? compareRowsAsc : compareRowsDesc;
-		  rows.sort(function(row1, row2) {
-			return compareRows(row1, row2, columnIndex);
-		  });
-		  rows.forEach(function(row) {
-			tbody.appendChild(row);
-		  });
-		}
-
-		var ths = document.querySelectorAll("#tabela th");
-		ths.forEach(function(th, index) {
-		  th.addEventListener("click", function() {
-			var isAscending = th.classList.contains("ascending");
-			sortTable(index, !isAscending);
-			th.classList.toggle("ascending", !isAscending);
-			th.classList.toggle("descending", isAscending);
-			th.querySelector(".arrow").classList.toggle("asc", !isAscending);
-			th.querySelector(".arrow").classList.toggle("desc", isAscending);
-		  });
-
-		  // Adiciona a seta na coluna atual
-		  var arrow = document.createElement("span");
-		  arrow.className = "arrow";
-		  th.appendChild(arrow);
-		});
-		
-		$(document).ready(function(){
-		  $("#filtro-tabela").on("keyup", function() {
-			var value = $(this).val().toLowerCase();
-			$("#tabela tbody tr").filter(function() {
-			  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-			});
-		  });
-		});
-  </script>
  </html>

@@ -27,12 +27,28 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
     exit; // Ensure that the script stops executing here
 }
 
-if(isset($_POST['codigo']) && isset($_POST['nome'])){
-	$nome = $_POST['nome'];
+$sql = "SELECT codigo, nome FROM setor";
+$result = $conn->query($sql);
+$setores = array();
+while ($row = $result->fetch_assoc()) {
+    $setores[$row["codigo"]] = $row["nome"];
+}
+
+if(isset($_POST['codigo']) && isset($_POST['setor']) && isset($_POST['login'])){
+	$login = $_POST['login'];
+	$setor = $_POST['setor'];
 	$codigo = $_POST['codigo'];
-	mysqli_query($conn, "UPDATE setor SET nome = '$nome' where codigo = $codigo");
+	mysqli_query($conn, "UPDATE tecnico SET login = '$login', senha = '$pass', setor = $setor where codigo = $codigo");
 	ob_start();
-	header("Location: ../setor.php"); 
+	header("Location: ../tecnico.php"); 
+	ob_end_flush();
+}
+
+if(isset($_POST['senha'])){
+	$pass = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+	mysqli_query($conn, "UPDATE tecnico SET senha = '$pass' where codigo = $codigo");
+	ob_start();
+	header("Location: ../tecnico.php"); 
 	ob_end_flush();
 }
 ?>
@@ -85,21 +101,38 @@ if(isset($_POST['codigo']) && isset($_POST['nome'])){
 	<?php if($login === 'admin'): ?>		
 		<div class="container mt-3">
 		  <div class="bg-light rounded pb-3">
-			<h1 class="text-center pt-3" id="topo">Editar setor</h1>
+			<h1 class="text-center pt-3" id="topo">Editar técnico</h1>
 			
 			<?php
 			$codigo = $_GET['i'];
-			$sql = "SELECT * FROM setor where codigo = $codigo";
+			$sql = "SELECT * FROM tecnico where codigo = $codigo";
 			$result = mysqli_query($conn, $sql);
+			$setor = mysqli_fetch_assoc($result)["setor"];
+			$result = mysqli_query($conn, $sql);
+			$login = mysqli_fetch_assoc($result)["login"];
 			?>	
-			<form class="mx-5 mb-3" method="post" action="editar.php">
+			<form class="mx-5 mb-3" method="post" action="<?= $_SERVER['PHP_SELF'] ?>">
 				<label>Código:</label>
 				<input class="form-control" type="number" name="codigo" value="<?= $codigo ?>" readonly>
-				<label>Nome do setor:</label>
-				<input class="form-control" type="text" name="nome" value="<?= mysqli_fetch_assoc($result)["nome"] ?>">
+				<label>Setor:</label>
+				<select class="form-select" name="setor">
+					<?php foreach ($setores as $codigo => $nome) : ?>
+						<?php if($codigo == $setor): ?>
+						<option selected value="<?= $codigo ?>"><?= $nome ?></option>
+						<?php else: ?>
+						<option value="<?= $codigo ?>"><?= $nome ?></option>
+						<?php endif ?>
+					<?php endforeach; ?>
+				</select>
+				<label>Login:</label>
+				<input class="form-control" type="text" name="login" value="<?= $login ?>">
+				<label>Senha:</label>
+				<input class="form-control" type="text" name="senha">
+				<div class="form-text">Deixe a senha em branco se não deseja alterar a senha.</div>
+				
 				<div class="input-group">
 					<button class="btn btn-sm btn-primary col-6 mt-2" type="submit">Salvar</button>
-					<a class="btn btn-sm btn-secondary col-6 mt-2" href="../setor.php">Cancelar</a>
+					<a class="btn btn-sm btn-secondary col-6 mt-2" href="../tecnico.php">Cancelar</a>
 				</div>
 			</form>
 				

@@ -97,7 +97,7 @@ while ($row = $result->fetch_assoc()) {
 		  <div class="bg-light rounded pb-3">
 			<h1 class="text-center pt-3" id="topo">Lista de técnicos</h1>
 			<p class="text-center">
-			<a href="../register.php" class="col-3 btn btn-sm btn-success">Novo técnico</a>
+			<a href="../register.php" class="col-3 btn btn-sm btn-success">Cadastrar técnico</a>
 			</p>
 			<?php
 			$sql = "SELECT * FROM tecnico";
@@ -110,7 +110,7 @@ while ($row = $result->fetch_assoc()) {
 					<th>Nome</th>
 					<th>Login</th>
 					<th>Setor</th>
-					<th>Inativo</th>
+					<th>Ativo</th>
 					<th>Ações</th>
 				</tr>
 			  </thead>
@@ -123,8 +123,8 @@ while ($row = $result->fetch_assoc()) {
 						<td><?= $setores[$row["setor"]] ?></td>
 						<td><?= $row["ativo"] ?> </td>
 						<td class="d-flex justify-content-center">
-						<button class="col-4 btn btn-sm btn-primary">Editar</button>
-						<button class="col-4 btn btn-sm btn-danger">Remover</button>
+						<a href="tecnico/editar.php?i=<?= $row['codigo'] ?>" class="col-4 btn btn-sm btn-primary">Editar</a>
+						<a href="tecnico/remover.php?i=<?= $row['codigo'] ?>" class="col-4 btn btn-sm btn-danger">Desativar</a>
 						</td>
 					</tr>
 				<?php endWhile; ?>
