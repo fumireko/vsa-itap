@@ -252,11 +252,12 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 		<div class="container mt-3" id="gerenciar">
 		  <div class="bg-light rounded pb-3 text-center">
 			<h1 class="text-center pt-3" id="topo">Gerenciar</h1>
-			<p class="lead">Use os botões abaixo para criar, editar e remover técnicos, setores e tipos de atendimento.</p>
+			<p class="lead">Use os botões abaixo para criar, editar e remover técnicos, setores, tipos de atendimento e endereços.</p>
 			<div class="input-group px-5">
-				<a href="crud/tecnico.php" class="btn btn-sm btn-outline-secondary col-4 mt-2">Técnicos</a>
-				<a href="crud/setor.php" class="btn btn-sm btn-outline-secondary col-4 mt-2">Setores</a>
-				<a href="crud/tipo_atendimento.php" class="btn btn-sm btn-outline-secondary col-4 mt-2">Tipos de atendimento</a>
+				<a href="crud/tecnico.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Técnicos</a>
+				<a href="crud/setor.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Setores</a>
+				<a href="crud/tipo_atendimento.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Tipos de atendimento</a>
+				<a href="crud/endereco.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Endereços</a>
 			</div>
 		  </div>
 		</div>
