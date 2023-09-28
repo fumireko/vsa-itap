@@ -70,7 +70,7 @@ if(isset($_POST['limpar'])){
 	if(isset($_GET['setor'])){
 		$setor = $_GET['setor'];
 		$setorNome = mysqli_fetch_assoc(mysqli_query($conn, 'SELECT nome from setor WHERE codigo = ' . $_GET['setor']))['nome'];
-		if($setorNome === 'Teste') $setorNome = '';
+		if($setorNome === 'Gestão') $setorNome = '';
 	}		
 	
 	$dti = $_GET['dti'];

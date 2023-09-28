@@ -10,10 +10,11 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 				
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) die("Conexão falhou: " . $conn->connect_error);
-$sql = "SELECT senha, ativo FROM tecnico WHERE login = '$login'";
+$sql = "SELECT s.nome, t.senha, t.ativo FROM tecnico t INNER JOIN setor s ON s.codigo = t.setor WHERE login = '$login';";
 	
 @$bcrypt = mysqli_fetch_assoc(mysqli_query($conn, $sql))['senha'];
 @$ativo = mysqli_fetch_assoc(mysqli_query($conn, $sql))['ativo'];
+@$tsetor = mysqli_fetch_assoc(mysqli_query($conn, $sql))['nome'];
 
 if(isset($_POST['limpar']) || $ativo === 0){
 	setcookie('auth', '', time()-3600); 
@@ -119,7 +120,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 	  </div>
 	</div>
 	
-	<?php if($login === 'admin'): ?>
+	<?php if($tsetor = "Gestão"): ?>
 	
 	<div class="container mt-3">
 	  <div class="bg-light p-5 rounded">
@@ -146,7 +147,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 			  </div>
 			</div>
 			<?php
-			$sql = 'select distinct a.fksetor, s.nome from atendimento a inner join setor s on (s.codigo = a.fksetor) where s.nome != "Teste"';
+			$sql = 'select distinct a.fksetor, s.nome from atendimento a inner join setor s on (s.codigo = a.fksetor) where s.nome != "Gestão"';
 			$result = mysqli_query($conn, $sql);
 			?>
 			<div class="form-check form-switch">
@@ -217,7 +218,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 			  </div>
 			</div>
 			<?php
-			$sql = 'select distinct a.fksetor, s.nome from atendimento a inner join setor s on (s.codigo = a.fksetor) where s.nome != "Teste"';
+			$sql = 'select distinct a.fksetor, s.nome from atendimento a inner join setor s on (s.codigo = a.fksetor) where s.nome != "Gestão"';
 			$result = mysqli_query($conn, $sql);
 			?>
 			<div class="form-check form-switch">
@@ -249,6 +250,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 	  </div>
 	</div>
 	
+		<?php if ($login = "admin"): ?>
 		<div class="container mt-3" id="gerenciar">
 		  <div class="bg-light rounded pb-3 text-center">
 			<h1 class="text-center pt-3" id="topo">Gerenciar</h1>
@@ -261,6 +263,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 			</div>
 		  </div>
 		</div>
+		<?php endif; ?>
 	
 		<div class="container mt-3">
 		  <div class="bg-light rounded pb-3">
