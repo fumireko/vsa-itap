@@ -7455,7 +7455,7 @@ INSERT INTO `setor` (`codigo`, `nome`) VALUES
 (3, 'CREAS'),
 (4, 'Criança Feliz'),
 (5, 'Conselho Tutelar'),
-(99, 'Teste');
+(99, 'Gestão');
 
 -- --------------------------------------------------------
 
@@ -7469,7 +7469,8 @@ CREATE TABLE `tecnico` (
   `email` varchar(256) NOT NULL,
   `login` varchar(64) NOT NULL,
   `senha` varchar(64) NOT NULL,
-  `setor` int(11) DEFAULT NULL
+  `setor` int(11) DEFAULT NULL,
+  `ativo` TINYINT(1) DEFAULT 1,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -7477,12 +7478,12 @@ CREATE TABLE `tecnico` (
 --
 
 INSERT INTO `tecnico` (`codigo`, `nome`, `email`, `login`, `senha`, `setor`) VALUES
-(1, 'Administrador', 'exemplo@mail.com', 'admin', '$2y$10$Og0533djy18XAiRZytXSE.F29anVKxB2h.95J1cOddltVPajG/w72', 99),
-(17, 'abrigo', 'abrigo@teste.com', 'abrigo', '$2y$10$QaQq/zfHxsLUwvTzwTacpumKLtDcMKVjDyoy2zmEkj9KZyb5XvFV.', 1),
-(18, 'cras', 'cras@teste.com', 'cras', '$2y$10$hIWXkvmLOUHX5cPAbqlG/eQJuAkB2kmxnYI6Xww7Sv3XMXiEWhMWe', 2),
-(19, 'creas', 'creas@teste.com', 'creas', '$2y$10$ZNBU8djtn00bZ4XaHYbjhOIsK2CNurEVSia1qZ3UnYuO9hlCwWFIq', 3),
-(20, 'criancafeliz', 'criancafeliz@teste.com', 'criancafeliz', '$2y$10$MXMap7FxLchZijAAtuVV/ui5HDPO30DvSq9C2bWlYSRV2rkJVnf5O', 4),
-(21, 'conselhotutelar', 'conselhotutelar@teste.com', 'conselhotutelar', '$2y$10$IjoW1ezUDL7UiH8KLdg8v.eFmyNbRskhh0xPT069JjufhMjLXF9Ce', 5);
+(1, 'Administrador', 'exemplo@mail.com', 'admin', '$2y$10$Og0533djy18XAiRZytXSE.F29anVKxB2h.95J1cOddltVPajG/w72', 99, 1),
+(17, 'abrigo', 'abrigo@teste.com', 'abrigo', '$2y$10$QaQq/zfHxsLUwvTzwTacpumKLtDcMKVjDyoy2zmEkj9KZyb5XvFV.', 1, 1),
+(18, 'cras', 'cras@teste.com', 'cras', '$2y$10$hIWXkvmLOUHX5cPAbqlG/eQJuAkB2kmxnYI6Xww7Sv3XMXiEWhMWe', 2, 1),
+(19, 'creas', 'creas@teste.com', 'creas', '$2y$10$ZNBU8djtn00bZ4XaHYbjhOIsK2CNurEVSia1qZ3UnYuO9hlCwWFIq', 3, 1),
+(20, 'criancafeliz', 'criancafeliz@teste.com', 'criancafeliz', '$2y$10$MXMap7FxLchZijAAtuVV/ui5HDPO30DvSq9C2bWlYSRV2rkJVnf5O', 4, 1),
+(21, 'conselhotutelar', 'conselhotutelar@teste.com', 'conselhotutelar', '$2y$10$IjoW1ezUDL7UiH8KLdg8v.eFmyNbRskhh0xPT069JjufhMjLXF9Ce', 5, 1);
 
 -- --------------------------------------------------------
 
@@ -7494,7 +7495,7 @@ CREATE TABLE `tipo_atendimento` (
   `codigo` int(11) NOT NULL,
   `tipo` varchar(128) DEFAULT NULL,
   `setor` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Despejando dados para a tabela `tipo_atendimento`
@@ -7507,17 +7508,17 @@ INSERT INTO `tipo_atendimento` (`codigo`, `tipo`, `setor`) VALUES
 (4, 'Gestante 36 a 50 anos', 4),
 (5, 'Criança 0 a 1 anos', 4),
 (6, 'Criança 2 a 3 anos', 4),
-(7, 'Abandono de incapaz', 3),
+(7, 'Negligência ou Abandono', 3),
 (8, 'Acompanhamento Medida Socioeducativa', 3),
 (9, 'Acompanhamento PAEFI', 3),
-(10, 'Acompanhamento pós-parto', 3),
-(11, 'Adolescente Gestante', 3),
+(10, 'Abuso sexual', 3),
+(11, 'Acolhimento', 3),
 (12, 'Alienação Parental', 3),
 (13, 'Aluguel Social', 3),
 (14, 'Cesta Básica', 3),
 (15, 'Criança ou adolescente dependente químico', 3),
-(16, 'Desaparecimento', 3),
-(17, 'Grupo de Agressores', 3),
+(16, 'Situação de rua', 3),
+(17, 'Grupo autores da violência', 3),
 (18, 'Grupo de mulheres', 3),
 (19, 'Inclusão PAEFI', 3),
 (20, 'Orientação', 3),
@@ -7549,7 +7550,20 @@ INSERT INTO `tipo_atendimento` (`codigo`, `tipo`, `setor`) VALUES
 (46, 'Documentação civil', 1),
 (47, 'Mediação com o mercado de trabalho', 1),
 (48, 'Reunião estudo de caso', 1),
-(49, 'Visita domiciliar', 1);
+(49, 'Visita domiciliar', 1),
+(50, 'Encaminhamento CRAS', 3),
+(51, 'Programa Bolsa Família', 3),
+(52, 'BPC', 3),
+(53, 'Indivíduo dependente químico', 3),
+(54, 'Atendimento domiciliar', 3),
+(55, 'Inclusão Medida Socioeducativa', 3),
+(56, 'Abordagem Social', 3),
+(57, 'Tráfico de seres humanos', 3),
+(58, 'Vítimas de discriminação por orientação sexual', 3),
+(59, 'Encaminhamento para a instituição de longa permanência', 3),
+(61, 'Residência Inabitável', 2),
+(62, 'Residência Inabitável', 3),
+(63, 'Residência Inabitável', 4);
 
 --
 -- Índices para tabelas despejadas
