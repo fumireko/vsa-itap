@@ -1,6 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 //Verificar o cookie
 require 'config/config.php';
 setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
@@ -97,30 +95,22 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 		</div>
 	<?php endif; ?>
 	
-	<div class="container mt-3">
-	  <div class="bg-light p-5 rounded">
-		<h1>Atendimentos</h1>
-		<p class="lead">Para iniciar um atendimento, escolha a rua e número ou use a sua localização atual.</p>
-		<div class="justify-content-center row">
-		<form action="atendimento.php" method="post">
-			<div class="input-group">
-				<input class="input-text col-8" type="text" list="logradouros" id="input-rua" name="logradouro" placeholder="Logradouro" required autocomplete="off">
-				<input class="input-text col-4" type="text" list="numeros" id="input-num" name="numero_predial" placeholder="Número predial" required autocomplete="off">
-			</div>
-			<div class="progress mt-2" style="height: 6px;">
-			  <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-			</div>
-			<div class="input-group">
-				<button class="btn btn-sm btn-primary col-6 mt-2" type="submit" id="botao-sel">Selecionar</button>
-				<button class="btn btn-sm btn-secondary col-6 mt-2" type="button" onclick="checkLote()" id="botao-loc">Usar localização</button>
-			</div>
-			<a href="parcial.php" class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover mt-2" style="font-size: 12px"><p style="text-align: center" class="mt-2">Atendimento parcial</p></a>
-		</form>
-		</div>
-	  </div>
-	</div>
-	
 	<?php if($tsetor = "Gestão"): ?>
+	
+		<?php if ($login = "admin"): ?>
+		<div class="container mt-3" id="gerenciar">
+		  <div class="bg-light rounded p-5 pt-3">
+			<h1 class="text pt-3" id="topo">Gerenciar</h1>
+			<p class="lead">Use os botões abaixo para criar, editar e remover técnicos, setores, tipos de atendimento e endereços.</p>
+			<div class="input-group px-5">
+				<a href="crud/tecnico.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Técnicos</a>
+				<a href="crud/setor.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Setores</a>
+				<a href="crud/tipo_atendimento.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Tipos de atendimento</a>
+				<a href="crud/endereco.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Endereços</a>
+			</div>
+		  </div>
+		</div>
+		<?php endif; ?>
 	
 	<div class="container mt-3">
 	  <div class="bg-light p-5 rounded">
@@ -250,21 +240,6 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 	  </div>
 	</div>
 	
-		<?php if ($login = "admin"): ?>
-		<div class="container mt-3" id="gerenciar">
-		  <div class="bg-light rounded pb-3 text-center">
-			<h1 class="text-center pt-3" id="topo">Gerenciar</h1>
-			<p class="lead">Use os botões abaixo para criar, editar e remover técnicos, setores, tipos de atendimento e endereços.</p>
-			<div class="input-group px-5">
-				<a href="crud/tecnico.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Técnicos</a>
-				<a href="crud/setor.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Setores</a>
-				<a href="crud/tipo_atendimento.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Tipos de atendimento</a>
-				<a href="crud/endereco.php" class="btn btn-sm btn-outline-secondary col-3 mt-2">Endereços</a>
-			</div>
-		  </div>
-		</div>
-		<?php endif; ?>
-	
 		<div class="container mt-3">
 		  <div class="bg-light rounded pb-3">
 			<h1 class="text-center pt-3" id="topo">Lista de atendimentos</h1>
@@ -317,7 +292,30 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 			</div>
 		</div>	
 	<?php endif; ?>
-  <?php endif; ?>
+	<div class="container mt-3">
+	  <div class="bg-light p-5 rounded">
+		<h1>Atendimentos</h1>
+		<p class="lead">Para iniciar um atendimento, escolha a rua e número ou use a sua localização atual.</p>
+		<div class="justify-content-center row">
+		<form action="atendimento.php" method="post">
+			<div class="input-group">
+				<input class="input-text col-8" type="text" list="logradouros" id="input-rua" name="logradouro" placeholder="Logradouro" required autocomplete="off">
+				<input class="input-text col-4" type="text" list="numeros" id="input-num" name="numero_predial" placeholder="Número predial" required autocomplete="off">
+			</div>
+			<div class="progress mt-2" style="height: 6px;">
+			  <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+			</div>
+			<div class="input-group">
+				<button class="btn btn-sm btn-primary col-6 mt-2" type="submit" id="botao-sel">Selecionar</button>
+				<button class="btn btn-sm btn-secondary col-6 mt-2" type="button" onclick="checkLote()" id="botao-loc">Usar localização</button>
+			</div>
+			<a href="parcial.php" class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover mt-2" style="font-size: 12px"><p style="text-align: center" class="mt-2">Atendimento parcial</p></a>
+		</form>
+		</div>
+	  </div>
+	</div>
+  <?php endif; ?>  
+  
   </body>
   <script>
 	//Filtros do mapa
