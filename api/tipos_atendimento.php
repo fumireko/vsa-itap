@@ -11,7 +11,7 @@ if ($conn->connect_error) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['setor'])) {
     $codigo = $_GET['setor'];
 	if($codigo != 99) $sql = "SELECT * FROM tipo_atendimento where setor = $codigo";
-	else $sql = "SELECT * FROM tipo_atendimento;";
+	else $sql = "SELECT * FROM tipo_atendimento order by tipo asc;";
     $result = mysqli_query($conn, $sql);
 	
     $atendimentos = array();
