@@ -95,9 +95,9 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 		</div>
 	<?php endif; ?>
 	
-	<?php if($tsetor = "Gestão"): ?>
+	<?php if($tsetor === "Gestão"): ?>
 	
-		<?php if ($login = "admin"): ?>
+		<?php if ($login === "admin"): ?>
 		<div class="container mt-3" id="gerenciar">
 		  <div class="bg-light rounded p-5 pt-3">
 			<h1 class="text pt-3" id="topo">Gerenciar</h1>
