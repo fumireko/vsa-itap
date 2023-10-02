@@ -203,7 +203,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 				
 			</div>
 			<div align="center">
-				<input class="form-check-input" type="checkbox" id="sem-nis" name="sem-nis">
+				<input class="form-check-input" type="checkbox" id="sem-nis" name="sem_nis">
 				<label class="form-check-label" style="font-size:14px" for="sem-nis">Atendimento sem NIS</label>
 			</div>
 			<div align="center">

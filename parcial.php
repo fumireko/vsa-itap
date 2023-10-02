@@ -13,7 +13,6 @@ $sql = "SELECT codigo, senha FROM tecnico WHERE login = '$login'";
 	
 @$bcrypt = mysqli_fetch_assoc(mysqli_query($conn, $sql))['senha'];
 @$fkTecnico = mysqli_fetch_assoc(mysqli_query($conn, $sql))['codigo'];
-@$fkEndereco = 9999;
 
 if(isset($_POST['limpar'])){
 	setcookie('auth', '', time()-3600); 
@@ -30,18 +29,18 @@ if(isset($_POST['nis']) && !isset($_POST['sem_nis'])){
 if(isset($_POST['sem_nis'])) $nis = '000.00000.00-0';
 
 //Lógica do endpoint
-if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fkEndereco']) && !empty($_POST['data_atendimento']) && !empty($_POST['descricao']) && !isset($nisError)){ 
+if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['data_atendimento']) && !empty($_POST['descricao']) && !isset($nisError)){ 
 		$data = array();
 		$data['tecnico'] = test_input($_POST["fkTecnico"]);
 		$data['setor'] = test_input($_POST["fkSetor"]);
-		$data['endereco'] = test_input($_POST["fkEndereco"]);
+		$data['endereco'] = test_input($_POST["bairro"]);
 		$data['data'] = test_input($_POST["data_atendimento"]);
 		$data['desc'] = test_input($_POST["descricao"]);
 		$data['nis'] = $nis;
 
 		$endpoint_url = "http://" . $_SERVER['SERVER_NAME'] . "/api/atendimentos";
 
-		$post_data = json_encode(array(
+		echo $post_data = json_encode(array(
 			'fkTecnico' => intval($data['tecnico']),
 			'fkSetor' => intval($data['setor']),
 			'fkEndereco' => intval($data['endereco']),
@@ -56,13 +55,15 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-		$response = curl_exec($ch);
-		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		echo $response = curl_exec($ch);
+		echo $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 		
 		if ($http_code === 201) {
 			$data['success'] = true;
+			ob_start();
 			header("Location: /?s=1");
+			ob_end_flush();
 		} else {
 			$data['success'] = false;
 			$data['error'] = 'Dados inválidos.';
@@ -120,7 +121,6 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		<div class="container mt-2 justify-content-center">
 		  <div class="bg-light p-4 rounded h-100">
 			<h1>Registrar Atendimento</h1>
-			
 			<p class="lead">Verifique os dados antes de inserir o atendimento.</p>
 		  </div>
 		</div>
@@ -130,25 +130,46 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 	<div class="container mt-2">
 	  <div class="bg-light p-4 rounded">
 		<form action="<?= $_SERVER['PHP_SELF']; ?>" method="post">
-			<div class="input-group">
-				<input type="hidden" name="fkTecnico" value="<?= $fkTecnico ?>">
-				<input type="hidden" name="fkSetor" value="<?= $fkSetor ?>">
-				<input type="hidden" name="fkEndereco" value="<?= $fkEndereco ?>">
+		
+			<input type="hidden" name="fkTecnico" value="<?= $fkTecnico ?>">
+			<input type="hidden" name="fkSetor" value="<?= $fkSetor ?>">				
+	
+			<?php
+			$sql = 'select distinct a.codigo, a.bairro from endereco a where geocodigo = 2147483647';
+			$result = mysqli_query($conn, $sql);
+			?>
+			<label class="form-check-label" for="checkBairro">Localidade rural:</label>
+			<select class="form-select" id="selectBairro" name="bairro">
+				<option value="0">Nenhum</option>
+				<?php while($row = mysqli_fetch_assoc($result)): ?>
+				<option value='<?= $row["codigo"] ?>'><?= $row["bairro"] ?></option>
+				<?php endWhile; ?>
+			</select>
+			
+			<?php if(isset($nisError)): ?>
+			<label for="desc">Tipo de atendimento:</label>
+			<select list="atendimentos-setor" class="form-select" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
+			
+			<label for="nis">NIS:</label>
+			<input class="form-control w-100 is-invalid" type="text" name="nis" id="nis" required autocomplete="off">
+			
+			<label for="nis">Data:</label>
+			<input class="input-text w-100" type="date" id="data_atendimento" name="data_atendimento" required>
+			<span class="invalid-feedback"><?= $nisError ?></span>
+			
+			<?php else: ?>
+			<label for="desc">Tipo de atendimento:</label>
+			<select list="atendimentos-setor" class="form-select" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
+			
+			<label for="nis">NIS:</label>
+			<input class="input-text w-100" type="text" id="nis" name="nis" placeholder="NIS" required autocomplete="off">
+			
+			<label for="nis">Data:</label>
+			<input class="input-text w-100" type="date" id="data_atendimento" name="data_atendimento" required>
+			<?php endif; ?>
 				
-				<?php if(isset($nisError)): ?>
-				<select list="atendimentos-setor" class="input-text col-4" type="text" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
-				<input class="form-control col-4 is-invalid" type="text" name="nis" id="nis" required autocomplete="off">
-				<input class="input-text col-4" type="date" id="data_atendimento" name="data_atendimento" required>
-				<span class="invalid-feedback"><?= $nisError ?></span>
-				<?php else: ?>
-				<select list="atendimentos-setor" class="input-text col-4" type="text" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
-				<input class="input-text col-4" type="text" id="nis" name="nis" placeholder="NIS" required autocomplete="off">
-				<input class="input-text col-4" type="date" id="data_atendimento" name="data_atendimento" required>
-				<?php endif; ?>
-				
-			</div>
 			<div align="center">
-				<input class="form-check-input" type="checkbox" id="sem-nis" name="sem-nis">
+				<input class="form-check-input" type="checkbox" id="sem-nis" name="sem_nis">
 				<label class="form-check-label" for="sem-nis">Atendimento sem NIS</label>
 			</div>
 			<div align="center">
@@ -166,7 +187,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		
 		//Populando as datalists
 		document.addEventListener("DOMContentLoaded", function(){
-		  const datalistD = document.getElementsByTagName('select')[0]
+		  const datalistD = document.querySelector('#desc')  
 		  datalistD.innerHTML = '';
 		  fetch('api/tipos_atendimento?setor=<?= $fkSetor ?>')
 			.then(response => response.json())
