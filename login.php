@@ -71,16 +71,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			<input class="form-control" type="text" id="login" name="login" value="<?= @$_POST['login'] ?>" required>
 			<?php endif; ?>
 
+			<br>
+
 			<?php if(isset($senhaError)): ?>
 			<label class="form-label" for="senha">Senha:</label>
-			<input class="form-control is-invalid" type="password" id="senha" name="senha" required>
+			<input pattern="[0-9]*" inputmode="numeric" class="form-control is-invalid" type="password" id="senha" name="senha" required>
 			<span class="invalid-feedback"><?= $senhaError ?></span>
 			<?php else: ?>
 			<label class="form-label" for="senha">Senha:</label>
-			<input class="form-control" type="password" id="senha" name="senha" required>
+			<input pattern="[0-9]*" inputmode="numeric" class="form-control" type="password" id="senha" name="senha" required>
 			<?php endif; ?>
 			
-            <button class="mt-3 col-12 btn btn-primary" type="submit">Login</button>
+            <button class="my-3 col-12 btn btn-primary" type="submit">Login</button>
+			
+			<small class="form-text text-muted mt-3">
+			<ul>
+				<li>O login para acesso é o seu primeiro e último nome, sem pontuação e sem espaços.</li>
+				<li>A senha é o seu CPF, sem pontos e traços.</li>
+				<li>Para trocar ou recuperar a senha, envie um email para 
+				<a href="mailto:vsaitap@gmail.com">vsaitap@gmail.com</a>.</li>
+			</ul>
+			</small>
 			
         </form>
     </body>
