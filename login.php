@@ -75,11 +75,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 			<?php if(isset($senhaError)): ?>
 			<label class="form-label" for="senha">Senha:</label>
-			<input pattern="[0-9]*" inputmode="numeric" class="form-control is-invalid" type="password" id="senha" name="senha" required>
+			<input inputmode="numeric" class="form-control is-invalid" type="password" id="senha" name="senha" required>
 			<span class="invalid-feedback"><?= $senhaError ?></span>
 			<?php else: ?>
 			<label class="form-label" for="senha">Senha:</label>
-			<input pattern="[0-9]*" inputmode="numeric" class="form-control" type="password" id="senha" name="senha" required>
+			<input inputmode="numeric" class="form-control" type="password" id="senha" name="senha" required>
 			<?php endif; ?>
 			
             <button class="my-3 col-12 btn btn-primary" type="submit">Login</button>
