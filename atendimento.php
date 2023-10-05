@@ -40,6 +40,7 @@ if(isset($_POST['logradouro']) && isset($_POST['numero_predial']) && !empty($_PO
 
 //Valida o NIS e seta a mensagem de erro
 if(isset($_POST['nis'])){
+	$nis = $_POST['nis'];
 	if (checkPISPASEP($_POST['nis']) || preg_match('/[0-9]/', $nis))
 	$nis = test_input($_POST['nis']);
 	else if(isset($_POST['sem_nis']) && !checkPISPASEP($_POST['nis']) && !preg_match('/[0-9]/', $nis))
