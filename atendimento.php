@@ -39,15 +39,11 @@ if(isset($_POST['logradouro']) && isset($_POST['numero_predial']) && !empty($_PO
 }
 
 //Valida o NIS e seta a mensagem de erro
-if(isset($_POST['nis'])){
-	$nis = $_POST['nis'];
-	if (checkPISPASEP($_POST['nis']) || preg_match('/[0-9]/', $nis))
-	$nis = test_input($_POST['nis']);
-	else if(isset($_POST['sem_nis']) && !checkPISPASEP($_POST['nis']) && !preg_match('/[0-9]/', $nis))
-	$nis = $_POST['nis'];
-	else
-	$nisError = "Número do NIS inválido.";
+if(isset($_POST['nis']) && !isset($_POST['sem_nis'])){
+	if (checkPISPASEP($_POST['nis'])) $nis = test_input($_POST['nis']);
+	else $nisError = "Número do NIS inválido.";
 }
+if(isset($_POST['sem_nis'])) $nis = '000.00000.00-0';
 
 //Lógica do endpoint
 if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fkEndereco']) && !empty($_POST['data_atendimento']) && !empty($_POST['descricao']) && !isset($nisError)){ 
@@ -61,7 +57,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 
 		$endpoint_url = "http://" . $_SERVER['SERVER_NAME'] . "/api/atendimentos";
 
-		echo $post_data = json_encode(array(
+		$post_data = json_encode(array(
 			'fkTecnico' => intval($data['tecnico']),
 			'fkSetor' => intval($data['setor']),
 			'fkEndereco' => intval($data['endereco']),
@@ -77,7 +73,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		$response = curl_exec($ch);
-		echo $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 		
 		if ($http_code === 201) {
@@ -241,7 +237,8 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		
 		const nisInput = document.querySelector('#nis');
 		const semNisInput = document.querySelector('#sem-nis');
-		function checkNis() {
+
+		nisInput.addEventListener('input', (e) => {
 		  const { value } = nisInput;
 
 		  if (value !== '') {
@@ -254,20 +251,15 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		  let formattedInput = value.replace(/\D/g, '');
 		  formattedInput = formattedInput.replace(/^(\d{3})(\d{5})(\d{2})(\d{1})$/, '$1.$2.$3-$4');
 		  nisInput.value = formattedInput.slice(0, 14);
-		}
+		});
 
-		nisInput.addEventListener('input', checkNis);
 		semNisInput.addEventListener('input', () => {
 		  const { checked } = semNisInput;
 
 		  if (checked) {
-			nisInput.disabled = false;
+			nisInput.disabled = true;
 			nisInput.value = '';
-			nisInput.placeholder = "Nome completo"
-			nisInput.removeEventListener('input', checkNis);
-			
-		  } else {			  
-			nisInput.addEventListener('input', checkNis);
+		  } else {
 			nisInput.disabled = false;
 		  }
 		});
