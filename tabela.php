@@ -79,28 +79,6 @@ if(isset($_POST['limpar'])){
 	  </div>
 	</div>
 	
-	<script>	
-	// Carrega a barra de progresso em 10 segundos
-
-    // var increment = 100 / (15 * 1000 / 100); // Divide por 1000 para converter de milissegundos para segundos
-	
-	// function updateProgressBar(progress) {
-		// $('.progress-bar').css('width', progress + '%');
-	// }
-	
-	// function animateProgressBar(progress, increment) {
-		// if (progress <= 100) {
-			// updateProgressBar(progress);
-			// progress += increment;
-			// setTimeout(function() {
-			// animateProgressBar(progress, increment);
-			// }, 100);
-		// }
-	// }
-
-    // animateProgressBar(0, increment);
-	</script>
-	
 	<div id="table-container"></div>
 
 	<nav class="navbar fixed-bottom navbar-dark bg-dark pb-4 text-light">
@@ -201,7 +179,7 @@ if(isset($_POST['limpar'])){
 		  var tbody = $('<tbody>').appendTo(table);
 		  
 		  // Cria as colunas da tabela
-		  var columns = ['NIS', 'Data', 'Endereço', 'Setor', 'Técnico', 'Descrição'];
+		  var columns = ['Nome', 'NIS', 'Data', 'Endereço', 'Setor', 'Técnico', 'Descrição'];
 		  var tr = $('<tr>').appendTo(thead);
 		  for (var i = 0; i < columns.length; i++) {
 			$('<th>').text(columns[i]).appendTo(tr);
@@ -210,6 +188,7 @@ if(isset($_POST['limpar'])){
 		  // Preenche a tabela com os dados
 		  $.each(data, function(index, item) {
 			var tr = $('<tr>').appendTo(tbody);
+			$('<td>').text(item.nome).appendTo(tr);
 			$('<td>').text(item.nis).appendTo(tr);
 			$('<td>').text(item.data_atendimento).appendTo(tr);
 			$('<td>').html('<a href="api/enderecos?logradouro=' + item.endereco + '">' + item.endereco + '</a>').appendTo(tr);

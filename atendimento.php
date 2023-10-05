@@ -54,16 +54,18 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		$data['data'] = test_input($_POST["data_atendimento"]);
 		$data['desc'] = test_input($_POST["descricao"]);
 		$data['nis'] = $nis;
+		$data['nome'] = test_input($_POST['nome']);
 
 		$endpoint_url = "http://" . $_SERVER['SERVER_NAME'] . "/api/atendimentos";
 
-		$post_data = json_encode(array(
+		echo $post_data = json_encode(array(
 			'fkTecnico' => intval($data['tecnico']),
 			'fkSetor' => intval($data['setor']),
 			'fkEndereco' => intval($data['endereco']),
 			'nis' => $data['nis'],
 			'data_atendimento' => $data['data'],
-			'descricao' => $data['desc']
+			'descricao' => $data['desc'],
+			'nome' => $data['nome']
 		));
 
 		$ch = curl_init();
@@ -73,7 +75,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		$response = curl_exec($ch);
-		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		echo $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 		
 		if ($http_code === 201) {
@@ -191,14 +193,16 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 				<input type="hidden" name="numero_predial" value="<?= $numero_predial ?>">
 				
 				<?php if(isset($nisError)): ?>
-				<select list="atendimentos-setor" class="input-text col-4" type="text" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
-				<input class="form-control col-4 is-invalid" type="text" name="nis" id="nis" required autocomplete="off">
-				<input class="input-text col-4" type="date" id="data_atendimento" name="data_atendimento" required>
+				<select list="atendimentos-setor" class="input-text col-3" type="text" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
+				<input class="form-control col-3 is-invalid" type="text" name="nis" id="nis" required autocomplete="off">
+				<input class="input-text col-3" type="text" name="nome" placeholder="Nome completo" required autocomplete="off">
+				<input class="input-text col-3" type="date" id="data_atendimento" name="data_atendimento" required>
 				<span class="invalid-feedback"><?= $nisError ?></span>
 				<?php else: ?>
-				<select list="atendimentos-setor" class="input-text col-4" type="text" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
-				<input class="input-text col-4" type="tel" id="nis" name="nis" placeholder="NIS" required autocomplete="off">
-				<input class="input-text col-4" type="date" id="data_atendimento" name="data_atendimento" required>
+				<select list="atendimentos-setor" class="input-text col-3" type="text" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
+				<input class="input-text col-3" type="tel" id="nis" name="nis" placeholder="NIS" required autocomplete="off">
+				<input class="input-text col-3" type="text" name="nome" placeholder="Nome completo" required autocomplete="off">
+				<input class="input-text col-3" type="date" id="data_atendimento" name="data_atendimento" required>
 				<?php endif; ?>
 				
 			</div>

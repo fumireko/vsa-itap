@@ -286,8 +286,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SERVER['REQUEST_URI'] === '/api/a
   $fkSetor = $data['fkSetor'];
   $fkTecnico = $data['fkTecnico'];
   $descricao = $data['descricao'];
+  $nome = $data['nome'];
 
-  $sql = "INSERT INTO atendimento (data_atendimento, fkEndereco, fkSetor, fkTecnico, descricao, nis) VALUES ('$data_atendimento', $fkEndereco, $fkSetor, $fkTecnico, '$descricao', '$nis')";
+  $sql = "INSERT INTO atendimento (data_atendimento, fkEndereco, fkSetor, fkTecnico, descricao, nis, nome) VALUES ('$data_atendimento', $fkEndereco, $fkSetor, $fkTecnico, '$descricao', '$nis', '$nome')";
   if ($conn->query($sql) === TRUE) {
     http_response_code(201);
   } else {

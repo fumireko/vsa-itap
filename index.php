@@ -253,7 +253,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 			<h1 class="text-center pt-3" id="topo">Lista de atendimentos</h1>
 			<p class="text-center"><a class="text-center" href="#filtro-tabela">Ir para o final</a></p>
 			<?php
-			$sql = "SELECT a.codigo, a.data_atendimento, a.descricao, a.nis, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			$sql = "SELECT a.codigo, a.data_atendimento, a.descricao, a.nis, a.nome, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
 			FROM atendimento a
 			INNER JOIN setor ON setor.codigo = a.fksetor
 			INNER JOIN endereco ON endereco.codigo = a.fkendereco
@@ -270,6 +270,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 					<th>Técnico</th>
 					<th>Setor</th>
 					<th>NIS</th>
+					<th>Nome</th>
 					<th>Data</th>
 				</tr>
 			  </thead>
@@ -282,6 +283,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 						<td><?= $row["tecnico"] ?> </td>
 						<td><?= $row["setor"] ?></td>
 						<td><?= $row["nis"] ?> </td>
+						<td><?= $row["nome"] ?> </td>
 						<td><?= $row["data_atendimento"] ?></td>
 					</tr>
 				<?php endWhile; ?>
