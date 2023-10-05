@@ -2,8 +2,16 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 require 'config/config.php';
-//Validação
 
+if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === "off") {
+    $location = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	ob_start();
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: ' . $location);
+    ob_end_flush();
+}
+
+//Validação
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	if (!preg_match("/^[a-zA-Z0-9]*$/",$_POST['login'])) 
 		$loginError = "Login inválido. Somente caracteres alfanuméricos são permitidos.";

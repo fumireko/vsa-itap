@@ -14,6 +14,14 @@ $sql = "SELECT s.nome, t.senha, t.ativo FROM tecnico t INNER JOIN setor s ON s.c
 @$ativo = mysqli_fetch_assoc(mysqli_query($conn, $sql))['ativo'];
 @$tsetor = mysqli_fetch_assoc(mysqli_query($conn, $sql))['nome'];
 
+if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === "off") {
+    $location = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	ob_start();
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: ' . $location);
+    ob_end_flush();
+}
+
 if(isset($_POST['limpar']) || $ativo === 0){
 	setcookie('auth', '', time()-3600); 
 	ob_start();
@@ -149,21 +157,21 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 					<option value='<?= $row["fksetor"] ?>'><?= $row["nome"] ?></option>
 					<?php endWhile; ?>
 				</select>
-			</div>
-			<?php
-			$sql = 'select distinct a.descricao from atendimento a';
-			$result = mysqli_query($conn, $sql);
-			?>
-			<div class="form-check form-switch">
-			  <input class="form-check-input" type="checkbox" role="switch" id="checkAtendimento">
-			  <label class="form-check-label" for="checkAtendimento">Filtrar por atendimento</label>
-				<select class="form-select"id="selectAtendimento" name="descricao" disabled>
-					<option value="filtro">Todos</option>
-					<?php while($row = mysqli_fetch_assoc($result)): ?>
-					<option value='<?= $row["descricao"] ?>'><?= $row["descricao"] ?></option>
-					<?php endWhile; ?>
-				</select>
-			</div>
+				</div>
+				<?php
+				$sql = 'select distinct a.descricao from atendimento a';
+				$result = mysqli_query($conn, $sql);
+				?>
+				<div class="form-check form-switch">
+				  <input class="form-check-input" type="checkbox" role="switch" id="checkAtendimento">
+				  <label class="form-check-label" for="checkAtendimento">Filtrar por atendimento</label>
+					<select class="form-select"id="selectAtendimento" name="descricao" disabled>
+						<option value="filtro">Todos</option>
+						<?php while($row = mysqli_fetch_assoc($result)): ?>
+						<option value='<?= $row["descricao"] ?>'><?= $row["descricao"] ?></option>
+						<?php endWhile; ?>
+					</select>
+				</div>
 			<?php
 			$sql = 'SELECT DISTINCT bairro FROM endereco ORDER BY endereco.bairro ASC;';
 			$result = mysqli_query($conn, $sql);
