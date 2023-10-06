@@ -29,14 +29,15 @@ if(isset($_POST['nis']) && !isset($_POST['sem_nis'])){
 if(isset($_POST['sem_nis'])) $nis = '000.00000.00-0';
 
 //Lógica do endpoint
-if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['data_atendimento']) && !empty($_POST['descricao']) && !isset($nisError)){ 
+	if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fkEndereco']) && !empty($_POST['data_atendimento']) && !empty($_POST['descricao']) && !isset($nisError)){ 
 		$data = array();
 		$data['tecnico'] = test_input($_POST["fkTecnico"]);
 		$data['setor'] = test_input($_POST["fkSetor"]);
-		$data['endereco'] = test_input($_POST["bairro"]);
+		$data['endereco'] = test_input($_POST["fkEndereco"]);
 		$data['data'] = test_input($_POST["data_atendimento"]);
 		$data['desc'] = test_input($_POST["descricao"]);
 		$data['nis'] = $nis;
+		$data['nome'] = test_input($_POST['nome']);
 
 		$endpoint_url = "http://" . $_SERVER['SERVER_NAME'] . "/api/atendimentos";
 
@@ -46,7 +47,8 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['da
 			'fkEndereco' => intval($data['endereco']),
 			'nis' => $data['nis'],
 			'data_atendimento' => $data['data'],
-			'descricao' => $data['desc']
+			'descricao' => $data['desc'],
+			'nome' => $data['nome']
 		));
 
 		$ch = curl_init();
@@ -55,7 +57,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['da
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-		echo $response = curl_exec($ch);
+		$response = curl_exec($ch);
 		echo $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 		
@@ -135,7 +137,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['da
 			<input type="hidden" name="fkSetor" value="<?= $fkSetor ?>">				
 	
 			<?php
-			$sql = 'select distinct a.codigo, a.bairro from endereco a where geocodigo = 2147483647';
+			$sql = 'select distinct a.codigo, a.bairro from endereco a where geocodigo = 2147483647 order by a.bairro';
 			$result = mysqli_query($conn, $sql);
 			?>
 			<label class="form-check-label" for="checkBairro">Localidade rural:</label>
@@ -153,6 +155,9 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['da
 			<label for="nis">NIS:</label>
 			<input class="form-control w-100 is-invalid" type="text" name="nis" id="nis" required autocomplete="off">
 			
+			<label for="nome">Nome:</label>	
+			<input class="input-text w-100" type="text" name="nome" placeholder="Nome completo" required autocomplete="off">
+			
 			<label for="nis">Data:</label>
 			<input class="input-text w-100" type="date" id="data_atendimento" name="data_atendimento" required>
 			<span class="invalid-feedback"><?= $nisError ?></span>
@@ -163,6 +168,9 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['da
 			
 			<label for="nis">NIS:</label>
 			<input class="input-text w-100" type="text" id="nis" name="nis" placeholder="NIS" required autocomplete="off">
+			
+			<label for="nome">Nome:</label>	
+			<input class="input-text w-100" type="text" name="nome" placeholder="Nome completo" required autocomplete="off">
 			
 			<label for="nis">Data:</label>
 			<input class="input-text w-100" type="date" id="data_atendimento" name="data_atendimento" required>
