@@ -27,7 +27,6 @@ if(isset($_POST['nis']) && !isset($_POST['sem_nis'])){
 	else $nisError = "Número do NIS inválido.";
 }
 if(isset($_POST['sem_nis'])) $nis = '000.00000.00-0';
-
 //Lógica do endpoint
 	if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fkEndereco']) && !empty($_POST['data_atendimento']) && !empty($_POST['descricao']) && !isset($nisError)){ 
 		$data = array();
@@ -141,7 +140,7 @@ if(isset($_POST['sem_nis'])) $nis = '000.00000.00-0';
 			$result = mysqli_query($conn, $sql);
 			?>
 			<label class="form-check-label" for="checkBairro">Localidade rural:</label>
-			<select class="form-select" id="selectBairro" name="bairro">
+			<select class="form-select" id="selectBairro" name="fkEndereco">
 				<option value="0">Nenhum</option>
 				<?php while($row = mysqli_fetch_assoc($result)): ?>
 				<option value='<?= $row["codigo"] ?>'><?= $row["bairro"] ?></option>
