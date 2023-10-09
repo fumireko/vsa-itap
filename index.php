@@ -8,10 +8,11 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 				
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) die("Conexão falhou: " . $conn->connect_error);
-$sql = "SELECT s.nome, t.senha, t.ativo FROM tecnico t INNER JOIN setor s ON s.codigo = t.setor WHERE login = '$login';";
+$sql = "SELECT s.nome, t.codigo, t.senha, t.ativo FROM tecnico t INNER JOIN setor s ON s.codigo = t.setor WHERE login = '$login';";
 	
 @$bcrypt = mysqli_fetch_assoc(mysqli_query($conn, $sql))['senha'];
 @$ativo = mysqli_fetch_assoc(mysqli_query($conn, $sql))['ativo'];
+@$tcodigo = mysqli_fetch_assoc(mysqli_query($conn, $sql))['codigo'];
 @$tsetor = mysqli_fetch_assoc(mysqli_query($conn, $sql))['nome'];
 
 if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === "off") {
@@ -323,6 +324,55 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 		</form>
 		</div>
 	  </div>
+	  
+	  <div class="container mt-3">
+		  <div class="bg-light rounded pb-3">
+			<h1 class="p-5 pb-3" id="topo">Lista de atendimentos</h1>
+			<?php
+			$sql = "SELECT a.codigo, a.data_atendimento, a.descricao, a.nis, a.nome, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+			FROM atendimento a
+			INNER JOIN setor ON setor.codigo = a.fksetor
+			INNER JOIN endereco ON endereco.codigo = a.fkendereco
+			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+			WHERE a.fktecnico = $tcodigo";
+			$result = mysqli_query($conn, $sql);
+			?>
+			<div class="d-flex justify-content-center mb-3">
+			    <div class="px-2 mx-2 bd-highlight"></div>
+				<input class="form-control h-25 text-center" type="text" id="filtro-tabela" placeholder="Pesquisar na tabela...">
+				<div class="px-2 mx-2 bd-highlight"></div>
+				<br>
+			</div>			
+			<table class="table table-sm table-striped" id="tabela" style="font-size: 12px;">
+			  <thead>
+				<tr>
+					<th>Código</th>
+					<th>Descrição</th>
+					<th>Endereço</th>
+					<th>Técnico</th>
+					<th>Setor</th>
+					<th>NIS</th>
+					<th>Nome</th>
+					<th>Data</th>
+				</tr>
+			  </thead>
+			  <tbody>
+				<?php while($row = mysqli_fetch_assoc($result)): ?>
+					<tr>
+						<td><?= $row["codigo"] ?></td>
+						<td><?= $row["descricao"] ?> </td>
+						<td><?= $row["endereco"] ?></td>
+						<td><?= $row["tecnico"] ?> </td>
+						<td><?= $row["setor"] ?></td>
+						<td><?= $row["nis"] ?> </td>
+						<td><?= $row["nome"] ?> </td>
+						<td><?= $row["data_atendimento"] ?></td>
+					</tr>
+				<?php endWhile; ?>
+			  </tbody>
+			</table>
+			</div>
+		</div>
 	</div>
   <?php endif; ?>  
   
