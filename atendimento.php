@@ -16,6 +16,9 @@ $sql = "SELECT codigo, senha FROM tecnico WHERE login = '$login'";
 @$bcrypt = mysqli_fetch_assoc(mysqli_query($conn, $sql))['senha'];
 @$fkTecnico = mysqli_fetch_assoc(mysqli_query($conn, $sql))['codigo'];
 
+$sql = "SELECT descricao FROM atendimento WHERE fkTecnico = $fkTecnico ORDER BY codigo DESC LIMIT 1;";
+@$ultimoTipo = mysqli_fetch_assoc(mysqli_query($conn, $sql))['descricao'];
+
 if(isset($_POST['limpar'])){
 	setcookie('auth', '', time()-3600); 
 	ob_start();
@@ -231,10 +234,19 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 			.then(response => response.json())
 			.then(data => {
 			  data.forEach(item => {
-				const option = document.createElement('option');
-				option.value = item.tipo;
-				option.innerHTML = item.tipo;
-				datalistD.appendChild(option);
+				if(item.tipo === "<?= $ultimoTipo ?>"){
+					const option = document.createElement('option');
+					option.value = item.tipo;
+					option.innerHTML = item.tipo;
+					option.selected = true;
+					datalistD.appendChild(option);
+				}
+				else{
+					const option = document.createElement('option');
+					option.value = item.tipo;
+					option.innerHTML = item.tipo;
+					datalistD.appendChild(option);
+				}
 			  });
 		    });
 		});
