@@ -104,6 +104,77 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 		</div>
 	<?php endif; ?>
 	
+	<div class="container mt-3">
+	  <div class="bg-light p-5 rounded">
+		<h1>Atendimentos</h1>
+		<p class="lead">Para iniciar um atendimento, escolha a rua e número ou use a sua localização atual.</p>
+		<div class="justify-content-center row">
+		<form action="atendimento.php" method="post">
+			<div class="input-group">
+				<input class="input-text col-8" type="text" list="logradouros" id="input-rua" name="logradouro" placeholder="Logradouro" required autocomplete="off">
+				<input class="input-text col-4" type="text" list="numeros" id="input-num" name="numero_predial" placeholder="Número predial" required autocomplete="off">
+			</div>
+			<div class="progress mt-2" style="height: 6px;">
+			  <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+			</div>
+			<div class="input-group">
+				<button class="btn btn-sm btn-primary col-6 mt-2" type="submit" id="botao-sel">Selecionar</button>
+				<button class="btn btn-sm btn-secondary col-6 mt-2" type="button" onclick="checkLote()" id="botao-loc">Usar localização</button>
+			</div>
+			<a href="parcial.php" class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover mt-2" style="font-size: 12px"><p style="text-align: center" class="mt-2">Atendimento parcial</p></a>
+		</form>
+		</div>
+	  </div>
+	  
+	<div class="container mt-3">
+	  <div class="bg-light rounded pb-3">
+		<h1 class="p-5 pb-3" id="topo">Lista de atendimentos</h1>
+		<?php
+		$sql = "SELECT a.codigo, a.data_atendimento, a.descricao, a.nis, a.nome, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
+		FROM atendimento a
+		INNER JOIN setor ON setor.codigo = a.fksetor
+		INNER JOIN endereco ON endereco.codigo = a.fkendereco
+		INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
+		WHERE a.fktecnico = $tcodigo";
+		$result = mysqli_query($conn, $sql);
+		?>
+		<div class="d-flex justify-content-center mb-3">
+			<div class="px-2 mx-2 bd-highlight"></div>
+			<input class="form-control h-25 text-center" type="text" id="filtro-tabela" placeholder="Pesquisar na tabela...">
+			<div class="px-2 mx-2 bd-highlight"></div>
+			<br>
+		</div>			
+		<table class="table table-sm table-striped" id="tabela" style="font-size: 12px;">
+		  <thead>
+			<tr>
+				<th>Código</th>
+				<th>Descrição</th>
+				<th>Endereço</th>
+				<th>Técnico</th>
+				<th>Setor</th>
+				<th>NIS</th>
+				<th>Nome</th>
+				<th>Data</th>
+			</tr>
+		  </thead>
+		  <tbody>
+			<?php while($row = mysqli_fetch_assoc($result)): ?>
+				<tr>
+					<td><?= $row["codigo"] ?></td>
+					<td><?= $row["descricao"] ?> </td>
+					<td><?= $row["endereco"] ?></td>
+					<td><?= $row["tecnico"] ?> </td>
+					<td><?= $row["setor"] ?></td>
+					<td><?= $row["nis"] ?> </td>
+					<td><?= $row["nome"] ?> </td>
+					<td><?= $row["data_atendimento"] ?></td>
+				</tr>
+			<?php endWhile; ?>
+		  </tbody>
+		</table>
+		</div>
+	</div>
+	
 	<?php if($tsetor === "Gestão"): ?>
 	
 		<?php if ($login === "admin"): ?>
@@ -251,7 +322,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 	
 		<div class="container mt-3">
 		  <div class="bg-light rounded pb-3">
-			<h1 class="text-center pt-3" id="topo">Lista de atendimentos</h1>
+			<h1 class="text-center pt-3" id="topo">Todos os atendimentos</h1>
 			<p class="text-center"><a class="text-center" href="#filtro-tabela">Ir para o final</a></p>
 			<?php
 			$sql = "SELECT a.codigo, a.data_atendimento, a.descricao, a.nis, a.nome, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
@@ -303,76 +374,6 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 			</div>
 		</div>	
 	<?php endif; ?>
-	<div class="container mt-3">
-	  <div class="bg-light p-5 rounded">
-		<h1>Atendimentos</h1>
-		<p class="lead">Para iniciar um atendimento, escolha a rua e número ou use a sua localização atual.</p>
-		<div class="justify-content-center row">
-		<form action="atendimento.php" method="post">
-			<div class="input-group">
-				<input class="input-text col-8" type="text" list="logradouros" id="input-rua" name="logradouro" placeholder="Logradouro" required autocomplete="off">
-				<input class="input-text col-4" type="text" list="numeros" id="input-num" name="numero_predial" placeholder="Número predial" required autocomplete="off">
-			</div>
-			<div class="progress mt-2" style="height: 6px;">
-			  <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-			</div>
-			<div class="input-group">
-				<button class="btn btn-sm btn-primary col-6 mt-2" type="submit" id="botao-sel">Selecionar</button>
-				<button class="btn btn-sm btn-secondary col-6 mt-2" type="button" onclick="checkLote()" id="botao-loc">Usar localização</button>
-			</div>
-			<a href="parcial.php" class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover mt-2" style="font-size: 12px"><p style="text-align: center" class="mt-2">Atendimento parcial</p></a>
-		</form>
-		</div>
-	  </div>
-	  
-	  <div class="container mt-3">
-		  <div class="bg-light rounded pb-3">
-			<h1 class="p-5 pb-3" id="topo">Lista de atendimentos</h1>
-			<?php
-			$sql = "SELECT a.codigo, a.data_atendimento, a.descricao, a.nis, a.nome, setor.nome AS setor, CONCAT(endereco.logradouro, ' ', endereco.numero_residencia) AS endereco, tecnico.nome AS tecnico
-			FROM atendimento a
-			INNER JOIN setor ON setor.codigo = a.fksetor
-			INNER JOIN endereco ON endereco.codigo = a.fkendereco
-			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
-			WHERE a.fktecnico = $tcodigo";
-			$result = mysqli_query($conn, $sql);
-			?>
-			<div class="d-flex justify-content-center mb-3">
-			    <div class="px-2 mx-2 bd-highlight"></div>
-				<input class="form-control h-25 text-center" type="text" id="filtro-tabela" placeholder="Pesquisar na tabela...">
-				<div class="px-2 mx-2 bd-highlight"></div>
-				<br>
-			</div>			
-			<table class="table table-sm table-striped" id="tabela" style="font-size: 12px;">
-			  <thead>
-				<tr>
-					<th>Código</th>
-					<th>Descrição</th>
-					<th>Endereço</th>
-					<th>Técnico</th>
-					<th>Setor</th>
-					<th>NIS</th>
-					<th>Nome</th>
-					<th>Data</th>
-				</tr>
-			  </thead>
-			  <tbody>
-				<?php while($row = mysqli_fetch_assoc($result)): ?>
-					<tr>
-						<td><?= $row["codigo"] ?></td>
-						<td><?= $row["descricao"] ?> </td>
-						<td><?= $row["endereco"] ?></td>
-						<td><?= $row["tecnico"] ?> </td>
-						<td><?= $row["setor"] ?></td>
-						<td><?= $row["nis"] ?> </td>
-						<td><?= $row["nome"] ?> </td>
-						<td><?= $row["data_atendimento"] ?></td>
-					</tr>
-				<?php endWhile; ?>
-			  </tbody>
-			</table>
-			</div>
-		</div>
 	</div>
   <?php endif; ?>  
   
