@@ -259,7 +259,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 			INNER JOIN setor ON setor.codigo = a.fksetor
 			INNER JOIN endereco ON endereco.codigo = a.fkendereco
 			INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
-			LIMIT 100";
+			ORDER BY a.codigo DESC LIMIT 100;";
 			$result = mysqli_query($conn, $sql);
 			?>	
 			<table class="table table-sm table-striped" id="tabela" style="font-size: 12px;">
