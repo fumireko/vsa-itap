@@ -136,7 +136,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 		INNER JOIN setor ON setor.codigo = a.fksetor
 		INNER JOIN endereco ON endereco.codigo = a.fkendereco
 		INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
-		WHERE a.fktecnico = $fktecnico 
+		WHERE a.fktecnico = $tcodigo 
 		ORDER BY a.codigo DESC";
 		$result = mysqli_query($conn, $sql);
 		?>
