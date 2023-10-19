@@ -126,7 +126,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 	  </div>
 	</div>
 	  
-	<?php if($login != "admin") ?>  
+	<?php if($login != "admin"): ?>  
 	<div class="container mt-3">
 	  <div class="bg-light rounded pb-3">
 		<h1 class="p-5 pb-3" id="topo">Lista de atendimentos</h1>
