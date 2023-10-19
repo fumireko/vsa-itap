@@ -123,9 +123,10 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 			</div>
 			<a href="parcial.php" class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover mt-2" style="font-size: 12px"><p style="text-align: center" class="mt-2">Atendimento parcial</p></a>
 		</form>
-		</div>
 	  </div>
+	</div>
 	  
+	<?php if($login != "admin") ?>  
 	<div class="container mt-3">
 	  <div class="bg-light rounded pb-3">
 		<h1 class="p-5 pb-3" id="topo">Lista de atendimentos</h1>
@@ -135,7 +136,8 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 		INNER JOIN setor ON setor.codigo = a.fksetor
 		INNER JOIN endereco ON endereco.codigo = a.fkendereco
 		INNER JOIN tecnico ON tecnico.codigo = a.fktecnico
-		WHERE a.fktecnico = $tcodigo";
+		WHERE a.fktecnico = 49 
+		ORDER BY a.codigo DESC";
 		$result = mysqli_query($conn, $sql);
 		?>
 		<div class="d-flex justify-content-center mb-3">
@@ -174,6 +176,7 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 		</table>
 		</div>
 	</div>
+	<?php endif; ?>
 	
 	<?php if($tsetor === "Gestão"): ?>
 	
