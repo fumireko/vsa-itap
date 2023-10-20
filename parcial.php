@@ -9,13 +9,10 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 				
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) die("Conexão falhou: " . $conn->connect_error);
-$sql = "SELECT codigo, senha FROM tecnico WHERE login = '$login'";
-	
+
+$sql = "SELECT codigo, senha FROM tecnico WHERE login = '$login'";	
 @$bcrypt = mysqli_fetch_assoc(mysqli_query($conn, $sql))['senha'];
 @$fkTecnico = mysqli_fetch_assoc(mysqli_query($conn, $sql))['codigo'];
-
-$sql = "SELECT descricao FROM atendimento WHERE fkTecnico = $fkTecnico ORDER BY codigo DESC LIMIT 1;";
-@$ultimoTipo = mysqli_fetch_assoc(mysqli_query($conn, $sql))['descricao'];
 
 if(isset($_POST['limpar'])){
 	setcookie('auth', '', time()-3600); 
@@ -150,6 +147,11 @@ if(isset($_POST['sem_nis'])) $nis = '000.00000.00-0';
 				<?php endWhile; ?>
 			</select>
 			
+			<?php
+			$sql = "SELECT descricao FROM atendimento WHERE fkTecnico = $fkTecnico ORDER BY codigo DESC LIMIT 1;";
+			@$ultimoTipo = mysqli_fetch_assoc(mysqli_query($conn, $sql))['descricao'];
+			?>
+			
 			<?php if(isset($nisError)): ?>
 			<label for="desc">Tipo de atendimento:</label>
 			<select list="atendimentos-setor" class="form-select" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
@@ -192,12 +194,12 @@ if(isset($_POST['sem_nis'])) $nis = '000.00000.00-0';
 	<?php else: header("Location: login.php"); ?>
 	<?php endif; ?>
 
-    <script>
+<script>
 		document.querySelector("#data_atendimento").value = new Date().toISOString().substr(0,10);
 		
 		//Populando as datalists
 		document.addEventListener("DOMContentLoaded", function(){
-		  const datalistD = document.getElementsByTagName('select')[0]
+		  const datalistD = document.getElementById('desc');
 		  datalistD.innerHTML = '';
 		  fetch('api/tipos_atendimento?setor=<?= $fkSetor ?>')
 			.then(response => response.json())
@@ -249,6 +251,7 @@ if(isset($_POST['sem_nis'])) $nis = '000.00000.00-0';
 		  }
 		});
     </script>
+
 
 </body>
 
