@@ -1,6 +1,5 @@
 <?php
 ini_set('display_errors', 1);
-error_reporting(E_ALL);
 //Verificar o cookie
 require 'config/config.php';
 setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
@@ -107,7 +106,7 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 
     <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js?"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js?"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=" async="" defer=""></script>
     <script src="https://unpkg.com/leaflet.gridlayer.googlemutant@latest/dist/Leaflet.GoogleMutant.js?"></script>
 	
@@ -170,17 +169,9 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 		</form>
 	  </div>
 	</nav>
-	
-		<div class="container mt-2 justify-content-center">
-		  <div class="bg-light p-4 rounded h-100">
-			<h1>Registrar Atendimento</h1>
-			
-			<p class="lead">Verifique a localização atual e o lote marcado em <span class="text-danger">vermelho</span>.</p>
-		  </div>
-		</div>
 		
 		<?php if(!isset($nisError)): ?>
-		<div id="map" class="mx-2"></div>
+		<div id="map" class="m-2 bg-light p-4 rounded"></div>
 		<?php endif; ?>
 
 	<datalist id="atendimentos-setor"></datalist>
@@ -188,27 +179,37 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 	<div class="container mt-2">
 	  <div class="bg-light p-4 rounded">
 		<form action="<?= $_SERVER['PHP_SELF']; ?>" method="post">
+			<input type="hidden" name="fkTecnico" value="<?= $fkTecnico ?>">
+			<input type="hidden" name="fkSetor" value="<?= $fkSetor ?>">
+			<input type="hidden" name="fkEndereco" value="<?= $fkEndereco ?>">
+			<input type="hidden" name="logradouro" value="<?= $logradouro ?>">
+			<input type="hidden" name="numero_predial" value="<?= $numero_predial ?>">
+			
+			<?php if(isset($nisError)): ?>
 			<div class="input-group">
-				<input type="hidden" name="fkTecnico" value="<?= $fkTecnico ?>">
-				<input type="hidden" name="fkSetor" value="<?= $fkSetor ?>">
-				<input type="hidden" name="fkEndereco" value="<?= $fkEndereco ?>">
-				<input type="hidden" name="logradouro" value="<?= $logradouro ?>">
-				<input type="hidden" name="numero_predial" value="<?= $numero_predial ?>">
-				
-				<?php if(isset($nisError)): ?>
 				<select list="atendimentos-setor" class="input-text col-3" type="text" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
 				<input class="form-control col-3 is-invalid" type="text" name="nis" id="nis" required autocomplete="off">
 				<input class="input-text col-3" type="text" name="nome" placeholder="Nome completo" required autocomplete="off">
 				<input class="input-text col-3" type="date" id="data_atendimento" name="data_atendimento" required>
 				<span class="invalid-feedback"><?= $nisError ?></span>
-				<?php else: ?>
-				<select list="atendimentos-setor" class="input-text col-3" type="text" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
-				<input class="input-text col-3" type="tel" id="nis" name="nis" placeholder="NIS" required autocomplete="off">
-				<input class="input-text col-3" type="text" name="nome" placeholder="Nome completo" required autocomplete="off">
-				<input class="input-text col-3" type="date" id="data_atendimento" name="data_atendimento" required>
-				<?php endif; ?>
-				
 			</div>
+			<?php else: ?>
+			<label for="">Endereço:</label>
+			<input class="form-control" type="text" placeholder="<?= $logradouro ?> <?= $numero_predial ?>" disabled>
+			
+			<label for="desc">Tipo de atendimento:</label>
+			<select list="atendimentos-setor" class="form-select" id="desc" name="descricao" placeholder="Descrição" value="<?= @$_POST['descricao'] ?>" required autocomplete="off"></select>
+			
+			<label for="nis">NIS:</label>
+			<input class="input-text w-100" type="text" id="nis" name="nis" placeholder="NIS" required autocomplete="off">
+			
+			<label for="nome">Nome:</label>	
+			<input class="input-text w-100" type="text" name="nome" placeholder="Nome completo" required autocomplete="off">
+			
+			<label for="nis">Data:</label>
+			<input class="input-text w-100" type="date" id="data_atendimento" name="data_atendimento" required>
+			<?php endif; ?>
+				
 			<div align="center">
 				<input class="form-check-input" type="checkbox" id="sem-nis" name="sem_nis">
 				<label class="form-check-label" style="font-size:14px" for="sem-nis">Atendimento sem NIS</label>
@@ -386,6 +387,8 @@ if(!empty($_POST['fkTecnico']) && !empty($_POST['fkSetor']) && !empty($_POST['fk
 
         const layerControl = L.control.layers(baseLayers, overlays, { collapsed: true }).addTo(map);
     </script>
+	
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
 </body>
 
