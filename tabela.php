@@ -49,7 +49,7 @@ if(isset($_POST['limpar'])){ setcookie('auth', '', time()-3600); header("Refresh
 	<?php if(isset($_COOKIE['auth']) && ($senha = $bcrypt || password_verify($senha, $bcrypt))): ?>
 	<div id="table-container"></div>
 
-	<div class="bg-dark text-light">
+	<div class="bg-dark text-light fixed-bottom">
 	<div id="filtros" class="row justify-content-center p-3 px-5 mx-5">
 		<div class="col-3">
 		  <label for="codigo-filter">Código:</label>
