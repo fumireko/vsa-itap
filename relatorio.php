@@ -188,7 +188,7 @@ foreach ($equipamentos as $i){
 	$pdf->Ln(); // Muda para a próxima linha
 	$pdf->SetFont('Arial', 'B', 12);
 		$pdf->Cell(1); // Célula esquerda
-		$pdf->Cell(187, $h, $i['nome'], 'LRT',1, 'C');
+		$pdf->Cell(187, $h, utf8_decode($i['nome']), 'LRT',1, 'C');
 		$pdf->Cell(1); // Célula esquerda
 		$pdf->Cell(187, $h, utf8_decode(strftime($dti . ' a ' . $dtf)), 'LR', 0, 'C');
 		$pdf->Ln();
