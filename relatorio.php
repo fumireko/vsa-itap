@@ -1,5 +1,5 @@
 <?php
-//Verificar o cookie
+require('./fpdf/fpdf.php');
 require 'config/config.php';
 setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
 
@@ -18,171 +18,271 @@ if(isset($_POST['limpar'])){
 	header("Refresh: 0"); 
 	ob_end_flush();
 }
-?>
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
-	<style>
-	.p-0 {
-	  padding: 0rem 0rem !important;
-	}
-	@page {
-      size: A4;
-      margin: 0;
+class PDF extends FPDF {
+    function Footer() {
+    	$this->SetY(-25);
+    	$this->Image('./images/rodape.png', 0, $this->GetY(), $this->w, 25);
     }
-    html,
-    body {
-      width: 210mm;
-      height: 297mm;
-      margin: 0;
-      padding: 0;
+}
+
+$equipamentos = [];
+if ($result = $conn->query("SELECT nome, codigo FROM setor")) {
+    while ($row = $result->fetch_assoc()) {
+        $equipamentos[] = [
+            'nome' => $row['nome'],
+            'codigo' => $row['codigo']
+        ];
     }
-    .content {
-      width: 100%;
-      height: 100%;
-      padding-left: 20mm;
-	  padding-right: 20mm;
-      box-sizing: border-box;
-	  min-height: calc(100% - 2.5cm);
-	  padding-bottom: 2.5cm;
-    }	
-	footer {
-	  position: fixed;
-	  bottom: 0;
-	  left: 0;
-	  width: 100%;
-	  height: 2.5cm;
-	  text-align: center;
-	}
-	</style>
-  </head>
-  <body>
-  <?php if((isset($_COOKIE['auth']) && ($senha = $bcrypt || password_verify($senha, $bcrypt))) && $login === 'admin'): ?>
-  
-	<?php
-	
-	if(isset($_GET['setor'])){
-		$setor = $_GET['setor'];
-		$setorNome = mysqli_fetch_assoc(mysqli_query($conn, 'SELECT nome from setor WHERE codigo = ' . $_GET['setor']))['nome'];
-		if($setorNome === 'Gestão') $setorNome = '';
-	}		
+    $result->free();
+}
+
+$pdf = new PDF();
+$pdf->AddPage('P', 'A4');
+
+// Define o tamanho das células
+$w = 60;
+$h = 9;
+
+// Define a fonte para os cabeçalhos das colunas
+$pdf->SetFont('Arial', 'B', 12);
+
+// Define o total inicial como zero
+$total = 0;
+
+    $pdf->Cell(200,40,'',0,0,'C');
+    $pdf->Image('./images/cabecalho.png', 0,0,205);
+    $pdf->Ln();
 	
 	$dti = $_GET['dti'];
 	$dtf = $_GET['dtf'];
-	
-	if(isset($_GET['descricao']))
-		$descricao = $_GET['descricao'];
-	else	
-		$descricao = "filtro";
-	
-	if(isset($_GET['bairro']))
-		$bairro = $_GET['bairro'];
-	else	
-		$bairro = "filtro";
-	
-	if(isset($_GET['setor']) && $_GET['setor'] != 99){
-		$setor = $_GET['setor'];
-		$query = "SELECT descricao, COUNT(*) AS count 
-				  FROM atendimento 
-				  WHERE data_atendimento between '$dti' and '$dtf' and fksetor = $setor 
-				  GROUP BY descricao 
-				  UNION ALL 
-				  SELECT 'TOTAL', SUM(count) 
-				  FROM (SELECT COUNT(*) AS count FROM atendimento where data_atendimento between '$dti' and '$dtf' and fksetor = $setor GROUP BY descricao)
-				  AS subquery 
-				  ORDER BY CASE 
-				  WHEN descricao = 'TOTAL' THEN 1 ELSE 0 END, count DESC;";
-	}
-	else if($descricao === "filtro" && $bairro != "filtro"){
-		$query = "SELECT descricao, COUNT(*) AS count 
-				  FROM atendimento a
-				  INNER JOIN endereco e ON e.codigo = a.fkEndereco
-				  WHERE e.bairro = '$bairro' AND a.data_atendimento BETWEEN '$dti' AND '$dtf'
-				  GROUP BY descricao
-				  UNION ALL
-				  SELECT '$bairro', SUM(count)
-				  FROM (SELECT COUNT(*) AS count FROM atendimento a INNER JOIN endereco e ON e.codigo = a.fkEndereco WHERE e.bairro = '$bairro' AND a.data_atendimento BETWEEN '$dti' AND '$dtf')
-				  AS subquery
-				  ORDER BY CASE
-				  WHEN descricao = 'TOTAL' THEN 1 ELSE 0 END, count DESC;
-				  ";
-	}
-	else if($descricao === "filtro" && !isset($_GET['setor'])){
-		$setor = 99;
-		$query = "
-				SELECT descricao, count
+
+    setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
+    $pdf->Cell(40); // Célula esquerda
+    $pdf->Cell(120, 5, utf8_decode(strftime('Itaperuçu, %d de %B de %Y')), 0, 1, 'C');
+    $pdf->Ln();
+
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('DE: Departamento de Vigilância Socioassistencial'), 'LRT');
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('PARA: Gestão Secretaria Municipal de Assistência Social'), 'LR');
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode("ASSUNTO: Atendimentos realizados no período entre " . $dti . ' e ' . $dtf . " em todos os"), 'LR');
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('Equipamentos lotados nesta Secretaria'), 'LRB');
+
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('Através do presente estamos:'), 'LRT');
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('( ) Encaminhando  ( ) Solicitando  (x) Informando  ( ) Comunicando'), 'LRB');
+
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('        Prezados, venho por meio deste, informar a relação de atendimentos realizados nos setores'), 'LRT');
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('da pasta da Secretaria, conforme instrumentais preenchidos pelo Equipamento. Segue relação'), 'LR');
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('dos números abaixo:'), 'LRB');
+
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(93, $h, "Equipamento", 1);
+    $pdf->Cell(94, $h, utf8_decode("Número de Atendimentos"), 1);
+    $pdf->Ln(); // Muda para a próxima linha
+
+// Loop for para imprimir as tabelas
+foreach ($equipamentos as $i){
+
+    // Cria as células vazias nas laterais
+    $pdf->Cell(40); // Célula esquerda
+    $pdf->Cell(40); // Célula esquerda
+    $pdf->Ln(); // Muda para a próxima linha
+
+    // Define a fonte para os dados das células
+    $pdf->SetFont('Arial', '', 12);
+
+    // Consulta SQL para obter os dados da tabela atual
+	$iv = intval($i['codigo']);
+    $sql = "SELECT count(*) AS sum FROM atendimento WHERE fkSetor = $iv AND data_atendimento BETWEEN '" . $dti . "' AND '" . $dtf . "'";
+    $result = $conn->query($sql);
+    $sum = $result->fetch_assoc()['sum'];
+
+    // Imprime as células com os dados da tabela atual
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(93, 7, utf8_decode($i['nome']), 1);
+    $pdf->Cell(94, 7, $sum, 1, 0, 'L');
+    // Adiciona o valor do total atual
+    $total += $sum;
+
+    // Muda para a próxima linha
+    $pdf->Ln();
+
+}
+
+// Define a fonte para o total
+$pdf->SetFont('Arial', 'B', 12);
+
+// Imprime o total
+$pdf->Cell(1); // Célula esquerda
+$pdf->Cell(93, $h, "Total", 1);
+$pdf->Cell(94, $h, $total, 1, 0, 'L');
+$pdf->Ln();
+
+$pdf->SetFont('Arial', '', 12);
+
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('Sem mais para o momento, seguimos à disposição para eventuais esclarecimentos.'), 'LRT');
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('Atenciosamente,'), 'LR',1, 'C');
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, '', 'LR');
+    $pdf->Ln();
+
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('Sabrina Willrich de Oliveira'), 'LR', 1, 'C');
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, utf8_decode('Diretora do Departamento de Vigilância Socioassistencial - CRESS 10426'), 'LR', 1, 'C');
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Ln();
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(187, $h, '', 'LRB');
+
+// Saída do PDF
+
+foreach ($equipamentos as $i){	
+	$total = 0;
+	$pdf->AddPage('P', 'A4');
+		
+	$sql = "SELECT descricao, count
 				FROM (
 					SELECT e.bairro AS descricao, COUNT(*) AS count 
 					FROM atendimento a
 					INNER JOIN endereco e ON e.codigo = a.fkEndereco
-					WHERE a.data_atendimento BETWEEN '$dti' AND '$dtf'
-					GROUP BY e.bairro
-					
-					UNION ALL
-					
-					SELECT 'TOTAL' AS descricao, SUM(subquery.count) AS count
-					FROM (
-						SELECT e.bairro AS descricao, COUNT(*) AS count 
-						FROM atendimento a
-						INNER JOIN endereco e ON e.codigo = a.fkEndereco
-						GROUP BY e.bairro
-					) AS subquery
+					WHERE a.data_atendimento BETWEEN '" . $dti . "' AND '" . $dtf . "'
+					AND a.fkSetor = " . intval($i['codigo']) . "
+					GROUP BY e.bairro					
 				) AS result
-				ORDER BY count DESC;
-				";
+			ORDER BY count DESC;";
+	$result = $conn->query($sql);
+	$data = [];
+
+	while ($row = $result->fetch_assoc()) {
+		$data[] = $row;
 	}
-	else {
-		$setor = 99;
-		$query = "SELECT s.nome as descricao, COUNT(a.codigo) as count 
-				FROM atendimento a 
-				INNER JOIN setor s ON s.codigo = a.fkSetor
-				WHERE a.data_atendimento BETWEEN '$dti' AND '$dtf'
-				GROUP BY s.nome
-				UNION ALL
-				SELECT 'TOTAL', COUNT(a.codigo)
-				FROM atendimento a 
-				WHERE a.data_atendimento BETWEEN '$dti' AND '$dtf';";
-	}
-	$result = mysqli_query($conn, $query);
-	?>
 	
-	<div class="content">
-		<img src="images/cabecalho.png" class="img-fluid">
-		<p class="text-center" style="font-size: 12px">Vigilância Socioassistencial - relação dos atendimentos de <?= $dti ?> a <?= $dtf ?>
-		<?php if (empty($setorNome)): ?></p>
-		<?php else: ?> no <?= $setorNome ?></p>
-		<?php endif ?>
+	$pdf->Cell(40); // Célula esquerda
+	$pdf->Cell(40); // Célula esquerda
+	$pdf->Ln(); // Muda para a próxima linha
+	$pdf->SetFont('Arial', 'B', 12);
+		$pdf->Cell(1); // Célula esquerda
+		$pdf->Cell(187, $h, $i['nome'], 'LRT',1, 'C');
+		$pdf->Cell(1); // Célula esquerda
+		$pdf->Cell(187, $h, utf8_decode(strftime($dti . ' a ' . $dtf)), 'LR', 0, 'C');
+		$pdf->Ln();
 		
-		<div class="mx-2" style="font-size: 10px">
-			<table class="table border border-black">
-				<th class="border border-black p-0">Atendimento</th>
-				<th class="border border-black p-0">Total</th>
-				
-				<?php while($row = mysqli_fetch_assoc($result)): ?>
-				<tr><td class="p-0 border border-black"><?= $row["descricao"] ?></td>
-				<td class="p-0 border border-black"><?= $row["count"] ?></td></tr>
-				<?php endWhile; ?>
-				
-			</table>
-		</div>
-	</div>
+	$pdf->SetFont('Arial', 'B', 12);
+	$pdf->Cell(1); // Célula esquerda
+	$pdf->Cell(93, $h, "Bairro", 1);
+	$pdf->Cell(94, $h, utf8_decode("Número de Atendimentos"), 1);
+	$pdf->Ln(); // Muda para a próxima linha
+	$pdf->SetFont('Arial', '', 9);
+
+	foreach ($data as $row) {
+		$bairro = $row['descricao'];
+		$sum = $row['count'];
+
+		// Imprime as células com os dados do bairro e o número correspondente
+		// Imprime o total
+
+		$pdf->Cell(1); // Célula esquerda
+		$pdf->Cell(93, 4.5, utf8_decode($bairro), 1);
+		$pdf->Cell(94, 4.5, $sum, 1, 0, 'L');
+		// Adiciona o valor do total atual
+		$total += $sum;
+
+		// Muda para a próxima linha
+		$pdf->Ln();
+	}
 	
-	<footer class="px-5">
-		<img src="images/rodape.png" class="img-fluid">
-	</footer>
+	$pdf->SetFont('Arial', 'B', 12);
+	$pdf->Cell(1);
+	$pdf->Cell(93, 7, 'Total', 1);
+	$pdf->Cell(94, 7, $total, 1, 0, 'L');
+	$pdf->Ln();
+}
+
+	$total = 0;
+	$pdf->AddPage('P', 'A4');
+		
+	$sql = "SELECT descricao, count
+				FROM (
+					SELECT e.bairro AS descricao, COUNT(*) AS count 
+					FROM atendimento a
+					INNER JOIN endereco e ON e.codigo = a.fkEndereco
+					WHERE a.data_atendimento BETWEEN '" . $dti . "' AND '" . $dtf . "'
+					GROUP BY e.bairro					
+				) AS result
+				ORDER BY count DESC;";
+	$result = $conn->query($sql);
+	$data = [];
+
+	while ($row = $result->fetch_assoc()) {
+		$data[] = $row;
+	}
+
+	$pdf->Cell(40); // Célula esquerda
+	$pdf->Cell(40); // Célula esquerda
+	$pdf->Ln(); // Muda para a próxima linha
+	$pdf->SetFont('Arial', 'B', 12);
+		$pdf->Cell(1); // Célula esquerda
+		$pdf->Cell(187, $h, "Todos os equipamentos", 'LRT',1, 'C');
+		$pdf->Cell(1); // Célula esquerda
+		$pdf->Cell(187, $h, utf8_decode(strftime($dti . ' a ' . $dtf)), 'LR', 0, 'C');
+		$pdf->Ln();
+		
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Cell(1); // Célula esquerda
+    $pdf->Cell(93, $h, "Bairro", 1);
+    $pdf->Cell(94, $h, utf8_decode("Número de Atendimentos"), 1);
+    $pdf->Ln(); // Muda para a próxima linha
+	$pdf->SetFont('Arial', '', 9);
+
+	foreach ($data as $row) {
+		$bairro = $row['descricao'];
+		$sum = $row['count'];
+
+		// Imprime as células com os dados do bairro e o número correspondente
+		// Imprime o total
+
+		$pdf->Cell(1); // Célula esquerda
+		$pdf->Cell(93, 4.5, utf8_decode($bairro), 1);
+		$pdf->Cell(94, 4.5, $sum, 1, 0, 'L');
+		// Adiciona o valor do total atual
+		$total += $sum;
+
+		// Muda para a próxima linha
+		$pdf->Ln();
+	}
 	
-  <?php else: header("Location: login.php"); ?>
-  <?php endif; ?>
-  </body>
-  <script>
-    window.onload = function() {
-      window.print();
-    };
-  </script>
-</html>
+	$pdf->SetFont('Arial', 'B', 12);
+	$pdf->Cell(1);
+	$pdf->Cell(93, 7, 'Total', 1);
+	$pdf->Cell(94, 7, $total, 1, 0, 'L');
+	$pdf->Ln();
+
+$pdf->Output();
+?>
+
