@@ -147,15 +147,14 @@ if(isset($_GET['bairro'])){
 		$pdf->Ln();
 		$pdf->Cell(1); // Célula esquerda
 		$pdf->Cell(187, $h, utf8_decode('Atenciosamente,'), 'LR',1, 'C');
-		$pdf->Cell(1); // Célula esquerda
-		$pdf->Cell(187, $h, '', 'LR');
-		$pdf->Ln();
 
 		$pdf->SetFont('Arial', 'B', 12);
 		$pdf->Cell(1); // Célula esquerda
 		$pdf->Cell(187, $h, utf8_decode('Sabrina Willrich de Oliveira'), 'LR', 1, 'C');
 		$pdf->Cell(1); // Célula esquerda
-		$pdf->Cell(187, $h, utf8_decode('Diretora do Departamento de Vigilância Socioassistencial - CRESS 10426'), 'LR', 1, 'C');
+		$pdf->Cell(187, $h, utf8_decode('Diretora do Departamento de Vigilância Socioassistencial'), 'LR', 1, 'C');
+		$pdf->Cell(1); // Célula esquerda
+		$pdf->Cell(187, $h, utf8_decode('Portaria 282/2023 de Setembro de 2023'), 'LR', 1, 'C');
 		$pdf->Cell(1); // Célula esquerda
 		$pdf->Ln();
 		$pdf->Cell(1); // Célula esquerda
@@ -415,7 +414,9 @@ else{
 		$pdf->Cell(1); // Célula esquerda
 		$pdf->Cell(187, $h, utf8_decode('Sabrina Willrich de Oliveira'), 'LR', 1, 'C');
 		$pdf->Cell(1); // Célula esquerda
-		$pdf->Cell(187, $h, utf8_decode('Diretora do Departamento de Vigilância Socioassistencial - CRESS 10426'), 'LR', 1, 'C');
+		$pdf->Cell(187, $h, utf8_decode('Diretora do Departamento de Vigilância Socioassistencial'), 'LR', 1, 'C');
+		$pdf->Cell(1); // Célula esquerda
+		$pdf->Cell(187, $h, utf8_decode('Portaria 282/2023 de Setembro de 2023'), 'LR', 1, 'C');
 		$pdf->Cell(1); // Célula esquerda
 		$pdf->Ln();
 		$pdf->Cell(1); // Célula esquerda
