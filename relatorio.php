@@ -26,7 +26,7 @@ class PDF extends FPDF {
     }
 }
 
-if(isset($_POST['bairro'])){
+if(isset($_GET['bairro'])){
 	$equipamentos = [];
 	if ($result = $conn->query("SELECT nome, codigo FROM setor")) {
 		while ($row = $result->fetch_assoc()) {
