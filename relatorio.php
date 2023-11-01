@@ -154,7 +154,7 @@ if(isset($_GET['bairro'])){
 		$pdf->Cell(1); // Célula esquerda
 		$pdf->Cell(187, $h, utf8_decode('Diretora do Departamento de Vigilância Socioassistencial'), 'LR', 1, 'C');
 		$pdf->Cell(1); // Célula esquerda
-		$pdf->Cell(187, $h, utf8_decode('Portaria 282/2023 de Setembro de 2023'), 'LR', 1, 'C');
+		$pdf->Cell(187, $h, utf8_decode('Portaria 282/2023 de 20 de Setembro de 2023'), 'LR', 1, 'C');
 		$pdf->Cell(1); // Célula esquerda
 		$pdf->Ln();
 		$pdf->Cell(1); // Célula esquerda
@@ -416,7 +416,7 @@ else{
 		$pdf->Cell(1); // Célula esquerda
 		$pdf->Cell(187, $h, utf8_decode('Diretora do Departamento de Vigilância Socioassistencial'), 'LR', 1, 'C');
 		$pdf->Cell(1); // Célula esquerda
-		$pdf->Cell(187, $h, utf8_decode('Portaria 282/2023 de Setembro de 2023'), 'LR', 1, 'C');
+		$pdf->Cell(187, $h, utf8_decode('Portaria 282/2023 de 20 de Setembro de 2023'), 'LR', 1, 'C');
 		$pdf->Cell(1); // Célula esquerda
 		$pdf->Ln();
 		$pdf->Cell(1); // Célula esquerda
