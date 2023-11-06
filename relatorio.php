@@ -467,7 +467,7 @@ else{
 
 			$pdf->Cell(1); // Célula esquerda
 			$pdf->Cell(93, 4.5, utf8_decode($bairro), 1);
-			$pdf->Cell(94, 4.5, $sum, 1, 0, 'L');
+			$pdf->Cell(94, 4.5, $sum, 1, 0, 'R');
 			// Adiciona o valor do total atual
 			$total += $sum;
 
@@ -478,7 +478,7 @@ else{
 		$pdf->SetFont('Arial', 'B', 12);
 		$pdf->Cell(1);
 		$pdf->Cell(93, 7, 'Total', 1);
-		$pdf->Cell(94, 7, $total, 1, 0, 'L');
+		$pdf->Cell(94, 7, $total, 1, 0, 'R');
 		$pdf->Ln();
 	}
 
@@ -523,7 +523,7 @@ else{
 
 			$pdf->Cell(1); // Célula esquerda
 			$pdf->Cell(93, 4.5, utf8_decode($bairro), 1);
-			$pdf->Cell(94, 4.5, $sum, 1, 0, 'L');
+			$pdf->Cell(94, 4.5, $sum, 1, 0, 'R');
 			// Adiciona o valor do total atual
 			$total += $sum;
 
@@ -534,7 +534,7 @@ else{
 		$pdf->SetFont('Arial', 'B', 12);
 		$pdf->Cell(1);
 		$pdf->Cell(93, 7, 'Total', 1);
-		$pdf->Cell(94, 7, $total, 1, 0, 'L');
+		$pdf->Cell(94, 7, $total, 1, 0, 'R');
 		$pdf->Ln();
 
 	$pdf->Output();
