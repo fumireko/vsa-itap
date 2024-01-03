@@ -105,7 +105,17 @@ if ($ativo === 0 || !isset($_COOKIE['auth']) || !($senha == $bcrypt || password_
 	<?php endif; ?>
 	
 	<div class="container mt-3">
-	  <div class="bg-light p-5 rounded">
+	
+		<?php if(!isset($_GET['s'])): ?>
+		<div class="alert alert-danger" role="alert">
+			<h4 class="alert-heading">Aviso: Registros de Atendimentos no CRAS</h4>
+			<p>Ao registrar os atendimentos realizados no CRAS nas áreas de Recepção, CadÚnico e Cartão Comida Boa, inclua o endereço de residência do beneficiário ou da pessoa atendida.</p>
+			<hr>
+			<p class="mb-0">Com a construção do novo prédio do CRAS, os registros de atendimento no endereço atual (RUA NILO CAIRO 264) ficarão desatualizados. Evite inserir atendimentos com esse endereço, pois tornarão os registros defasados com a mudança para o novo prédio do CRAS.</p>
+		</div>
+		<?php endif; ?>
+		
+	  <div class="bg-light p-5 rounded">	  
 		<h1>Atendimentos</h1>
 		<p class="lead">Para iniciar um atendimento, escolha a rua e número ou use a sua localização atual.</p>
 		<div class="justify-content-center row">
